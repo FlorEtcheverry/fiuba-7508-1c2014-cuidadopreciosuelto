@@ -1,0 +1,68 @@
+#me guardo el directorio actual
+directorio_ppal=`pwd`
+
+#leo directorio el origen 
+cd ${1%/*}
+origen="`pwd`/${1##*/}"
+cd $directorio_ppal
+
+#leo el directorio destino
+cd ${2%/*}
+destino="`pwd`/${2##*/}"
+cd $directorio_ppal
+
+#le el tercer parametro si no fue dado le pongo cualquier valor
+if [ $# -lt 3 ];then invocador="SOMEONE";else invocador=$3; fi
+
+#me fijo si son iguales
+if [ $origen = $destino ]
+then
+	./Logging Mover "se esta intentando mover un archivo a su misma posicion: $origen" WAR
+	exit 0
+fi
+
+#me fijo si existe el origen
+if ! [ -f $origen ]
+then 
+	./Logging Mover "se esta intentando mover un archivo inexistente: $origen" ERR
+	exit 1
+fi
+
+#me fijo si existe el directorio destino
+if ! [ -d ${destino%/*} ]
+then 
+	./Logging Mover "se esta intentando mover hacia un directorio inexistente: ${destino%/*}" ERR
+	exit 2
+fi
+
+#me fijo si en ese directorio ya existe el archivo destino
+if [ -f $destino ]
+#si ya existe lo guardo en la carpeta dup
+then
+	#si no existe la carpeta dup la creo
+	if ! [ -d "${destino%/*}/dup" ]; then mkdir "${destino%/*}/dup";fi
+	base_destino="${destino%/*}/dup/${destino##*/}"
+	#me dijo si el archivo no esta ya en la carpeta dup
+	if ! [ -f $base_destino ]
+	then 
+		#si no esta lo muevo
+		mv $origen $base_destino
+		./Logging Mover "ya existia el archivo destino, guardo $origen en: $base_destino" INFO
+	else 
+		#si ya esta busco una extension que le pueda poner y lo muevo
+		contador=1
+		while [ -f "$base_destino.$contador" ]
+		do
+			let contador=contador+1
+		done
+		mv $origen "$base_destino.$contador"
+		./Logging Mover "ya existia el archivo destino, guardo $origen en: $base_destino.$contador" INFO
+	fi
+
+#si no existia lo muevo y listo
+else
+	mv $origen $destino
+	./Logging Mover "archivo $origen movido exitosamente" INFO
+fi
+
+exit 0

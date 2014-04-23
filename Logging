@@ -1,5 +1,4 @@
 #! /usr/bin/perl
-
 #leo los parametros
 ($comando,$mensaje,$tipo) = @ARGV;
 
@@ -18,6 +17,7 @@ $archivo = &getArchivo($comando);
 $cuando= &getDay;
 
 #escribo el log
+print $archivo;
 &escribir($archivo,"$cuando $quien $comando $tipo $mensaje\n");
 
 #verifico que no me haya pasado con la cantidad de bytes
@@ -61,5 +61,5 @@ sub getArchivo{
 	if ($comando eq "Installer"){
 		return("./conf/Installer.log");
 	}
-	return($ENV{LOGDIR}.$comando.$ENV{LOGEXT});
+	return("$ENV{LOGDIR}/$comando.$ENV{LOGEXT}");
 }
