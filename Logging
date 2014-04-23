@@ -1,0 +1,65 @@
+#! /usr/bin/perl
+
+#leo los parametros
+($comando,$mensaje,$tipo) = @ARGV;
+
+#valido el tipo de mensaje y si es invalido o no esta digo que es de informacion
+if(($tipo eq "") or ($tipo ne "INFO" and $tipo ne "WAR" and $tipo ne "ERR" )){
+	$tipo="INFO"
+}
+
+#obtengo el usuario
+$quien=$ENV{USER};
+
+#obtengo todo el nombre del log
+$archivo = &getArchivo($comando);
+
+#obtengo los datos de cuando
+$cuando= &getDay;
+
+#escribo el log
+&escribir($archivo,"$cuando $quien $comando $tipo $mensaje\n");
+
+#verifico que no me haya pasado con la cantidad de bytes
+&verificarTam($archivo);
+
+
+
+
+
+#subrutina que verifica si me pase de la cantidad de bytes si me pase lo corto
+sub verificarTam{
+	my($archivo) = @_;
+	my $tam_archivo = `wc -c $archivo`;
+	my @tam_archivo=split(" ",`wc -c $archivo`);
+	if( ($ENV{LOGSIZE}*1024) < $tam_archivo[0] ){
+		system("tail -n 50 $archivo > temp~");
+		system("mv temp~ $archivo");
+		my $cuando= &getDay;
+		&escribir($archivo,"$cuando Log exedido para poder controlar que se está realizando este trabajo\n")
+	}
+}
+
+sub escribir{
+	my($archivo,$mensaje)=@_;
+	open(ARCHIVO,">>$archivo") || die "No se pudo abrir el archivo del log\n";
+	print ARCHIVO "$mensaje";
+	close(ARCHIVO);
+}
+
+#subrutina que devuelve la fecha
+sub getDay{
+	my($sec,$min,$hour,$mday,$month,$year)=localtime;
+	$year+=1900;
+	$month++;
+	return ("$mday/$month/$year $year:$min:$sec");
+}
+
+#subrutina que devuelve el archivo para el log del comando
+sub getArchivo{
+	my ($comando) = @_;
+	if ($comando eq "Installer"){
+		return("./conf/Installer.log");
+	}
+	return($ENV{LOGDIR}.$comando.$ENV{LOGEXT});
+}
