@@ -1,0 +1,30 @@
+#!/bin/sh
+#me fijo que haya sido inicializado el ambiente
+if [ "$INIT" != "true" ]
+then 
+	echo No se realizo la inicializacion correspondiente
+	exit 1
+fi
+
+#obtengo el comando a ejecutar
+comando=$1
+
+#me fijo si existe el comando a ejecutar
+if ! [ -f "$BINDIR/$comando" ]
+then 
+	echo el comando que se quier empezar no existe
+	exit 2
+fi
+
+#me fijo que el comando no se este ejecutando
+#me fijo que no sea el comando grep ni este
+pid=`ps -ef | grep $comando | grep -e grep -e Start -v`
+pid=`echo $pid | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
+
+if [ "$pid" != "" ]
+then
+	echo El proceso ya se encuentra ejecutado
+	exit 3
+fi
+
+./$comando&

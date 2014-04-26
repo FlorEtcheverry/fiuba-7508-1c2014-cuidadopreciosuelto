@@ -1,3 +1,4 @@
+#!/bin/sh
 #me guardo el directorio actual
 directorio_ppal=`pwd`
 
