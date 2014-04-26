@@ -1,4 +1,5 @@
 #! /usr/bin/perl
+
 #leo los parametros
 ($comando,$mensaje,$tipo) = @ARGV;
 
@@ -17,15 +18,10 @@ $archivo = &getArchivo($comando);
 $cuando= &getDay;
 
 #escribo el log
-print $archivo;
 &escribir($archivo,"$cuando $quien $comando $tipo $mensaje\n");
 
 #verifico que no me haya pasado con la cantidad de bytes
 &verificarTam($archivo);
-
-
-
-
 
 #subrutina que verifica si me pase de la cantidad de bytes si me pase lo corto
 sub verificarTam{

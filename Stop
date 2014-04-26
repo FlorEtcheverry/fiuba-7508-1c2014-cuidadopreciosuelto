@@ -1,0 +1,17 @@
+#!/bin/sh
+
+#obtengo el comando a detener
+comando=$1
+
+#me fijo si el comando se esta ejecutando
+#me fijo que no sea el comando grep ni este
+pid=`ps -ef | grep $comando | grep -e grep -e Stop -v`
+pid=`echo $pid | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
+
+if [ "$pid" = "" ]
+then
+	echo Dicho proceso no se esta ejecutando
+	exit 1
+fi
+
+kill $pid
