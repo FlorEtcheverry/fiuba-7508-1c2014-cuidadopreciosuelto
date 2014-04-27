@@ -14,9 +14,8 @@ fi
 if [ ! -d ./maestros ]
 then
 	mkdir maestros
-	cd maestros
-	mkdir precios
-	cd ..
+	mkdir ./maestros/precios
+	mkdir ./maestros/precios/proc
 fi
 
 if [ ! -d ./aceptados ]
