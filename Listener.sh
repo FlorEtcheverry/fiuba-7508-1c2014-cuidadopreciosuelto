@@ -82,9 +82,10 @@ do
 		fi
 
 
-		usuario=`echo "$nombre" | sed s-'^.*\.[0-9]\{8\}\.\([^-]*\)\.txt$-\1-'`
+		usuario=`echo "$nombre" | sed s-'^[^\.]*\.[0-9]\{8\}\.\([^-]*\)\.txt$-\1-'`
 
 		esColab=2
+		#HIPOTESIS: si hay dos usuarios iguales y alguno es colaborador, consideramos archivo valido
 		while read -r reg ; do
    			esColab=`echo "$reg" | cut -s -f4 -d';'`
 			if [ "$esColab" -eq 1 ] ; then
