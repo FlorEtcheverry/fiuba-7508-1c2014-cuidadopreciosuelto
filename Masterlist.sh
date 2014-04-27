@@ -10,29 +10,26 @@ regNOK=0
 
 while read -r linea
 do
-	if [ "$i" -eq 0 ] ; then
+	if [ "$i" -eq 0 ] || [ -z "$linea" ] ; then
 		let i=i+1		
 		continue
-		#es cabecera
+		#es cabecera o en blanco
 	fi
 
 	superID=$2
 	usuario=$3
 	fecha=$4$5$6
 
-
-
-
-
-#ToDo verificar cant de campos en la linea sea correcta!
-
-
-
+	cantCampos=`echo $linea|sed 's/[^;]//g'|wc -m`
+	if [ $cantCampos -ne $7 ] ; then
+		let regNOK=regNOK+1
+		continue
+	fi
 
 	prod=`echo "$linea" | cut -s -f"$8" -d';'`
 	precio=`echo "$linea" | cut -s -f"$9" -d';'`
 
-	if [ "$prod" = "" ] || [ "$precio" = "" ] ; then
+	if [ "$prod" = "" ] || [ "$precio" = "" ] || [[ "$prod" =~ ^\ *$ ]] || [[ "$precio" =~ ^\ *$ ]] ; then
 		let regNOK=regNOK+1
 		continue
 	fi
@@ -40,8 +37,6 @@ do
 	let regOK=regOK+1
 
 	echo "$superID;$usuario;$fecha;$prod;$precio" >> ./$MAEDIR/precios.mae
-
-	let i=i+1
 done < "$arch"
 
 ./Logging Masterlist "Registros OK: "$regOK INFO
@@ -50,6 +45,7 @@ done < "$arch"
 return 0
 
 }
+
 
 function reemplazo {
 
@@ -70,11 +66,15 @@ return 0
 }
 
 
+
+
 ./Logging Masterlist "Inicio de Masterlist" INFO
 
 archPrecios=($MAEDIR/precios/*.txt)
+cantArchProc=${#archPrecios[@]}
+./Logging Masterlist "Cantidad de listas a procesar: $cantArchProc" INFO
 
-./Logging Masterlist "Cantidad de listas a procesar: ${#files[@]}" INFO
+if [ ! $cantArchProc -eq 0 ] ; then
 
 for arch in $MAEDIR/precios/*.txt
 do
@@ -82,13 +82,14 @@ do
 	./Logging Masterlist "Archivo a procesar: $nombre" INFO
 
 	#verifico que no este duplicado
-	if grep -q '^'"$nombre"'$' $MAEDIR/precios/proc ; then
+	if [ -f $MAEDIR/precios/proc/"$nombre" ] ; then
 		./Mover $arch $RECHDIR Masterlist
 		./Logging Masterlist "Se rechaza archivo por estar DUPLICADO" INFO
 		continue
 	fi
 
 	#valido registro cabecera
+	#valido extra que los campos numericos realmente sean numericos
 	cabecera=`sed -n -e 1p "$arch"`
 	
 	nombreSuper=`echo $cabecera | cut -s -f1 -d';'`
@@ -110,13 +111,15 @@ do
 		continue
 	fi
 
-	if [ "$ubicProd" -eq "$ubicPrecio" ] || [ "$ubicProd" -lt 0 ] ; then
+	re='^[0-9]+$'
+
+	if ! [[ $ubicProd =~ $re ]] || [ "$ubicProd" -eq "$ubicPrecio" ] || [ "$ubicProd" -lt 0 ] ; then
 		./Mover $arch $RECHDIR Masterlist
 		./Logging Masterlist "Se rechaza archivo por ubicacion producto invalida" INFO
 		continue
 	fi
 
-	if [ "$ubicProd" -eq "$ubicPrecio" ] || [ "$ubicPrecio" -lt 0 ] ; then
+	if ! [[ $ubicPrecio =~ $re ]] || [ "$ubicProd" -eq "$ubicPrecio" ] || [ "$ubicPrecio" -lt 0 ] ; then
 		./Mover $arch $RECHDIR Masterlist
 		./Logging Masterlist "Se rechaza archivo por ubicacion precio invalida" INFO
 		continue
@@ -148,7 +151,7 @@ do
 	mesNuevo=`echo "$nombre" | sed s-'^.*\.[0-9]\{4\}\([0-9]\{2\}\)[0-9]\{2\}\.[^-]*\.txt$-\1-'`
 	diaNuevo=`echo "$nombre" | sed s-'^.*\.[0-9]\{6\}\([0-9]\{2\}\)\.[^-]*\.txt$-\1-'`
 
-	if [ ! -n " $registro" ] || [ "$registro" = "" ] ; then
+	if [ -z "$registro" ] || [ "$registro" = "" ] ; then
 		#PROCESAR ALTA
 		alta $arch $superID $usuario $anioNuevo $mesNuevo $diaNuevo $cantCampos $ubicProd $ubicPrecio
 		./Mover $arch $MAEDIR/precios/proc
@@ -176,6 +179,8 @@ do
 	fi
 
 done
+
+fi
 
 ./Logging Masterlist "Fin de Masterlist" INFO
 
