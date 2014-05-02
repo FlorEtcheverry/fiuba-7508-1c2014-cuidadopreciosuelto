@@ -21,6 +21,7 @@ fi
 if [ ! -d ./aceptados ]
 then
 	mkdir aceptados
+	mkdir ./aceptados/proc
 fi
 
 if [ ! -d ./novedades ]
@@ -33,11 +34,19 @@ then
 	mkdir rechazados
 fi
 
+if [ ! -d ./informes ]
+then
+	mkdir informes
+	mkdir ./informes/pres
+fi
+
+
 export LOGDIR=./logs
 export BINDIR=./binarios
 export LOGEXT=log
-export LOGSIZE=1
+export LOGSIZE=20
 export MAEDIR=./maestros
 export ACEPDIR=./aceptados
 export NOVEDIR=./novedades
 export RECHDIR=./rechazados
+export INFODIR=./informes

@@ -1,0 +1,14 @@
+HIPOTESIS PARA VALIDACIONES DE ARCHIVOS PARA RATING
+
+no se validan tablas de equivalencias
+las unidades en um.tab tienen un solo punto(.) de abreviacion
+
+la validacion de precios.mae es:
+tiene q tener formato: superid;colaborador;fecha(aaaammdd);desprod;precio
+siendo precio un numero [0-9]*.[0-9][0-9]
+no se valida que sea una fecha valida
+si hay lineas vacias es invalido
+si esta vacio es invalido (duh)
+
+validacion de la lista de compras:
+la enumeracion de items empieza de 1

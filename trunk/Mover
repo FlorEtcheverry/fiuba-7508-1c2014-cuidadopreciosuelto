@@ -2,25 +2,8 @@
 #me guardo el directorio actual
 directorio_ppal=`pwd`
 
-#leo directorio el origen 
-cd ${1%/*}
-origen="`pwd`/${1##*/}"
-cd $directorio_ppal
-
-#leo el directorio destino
-cd ${2%/*}
-destino="`pwd`/${2##*/}"
-cd $directorio_ppal
-
-#le el tercer parametro si no fue dado le pongo cualquier valor
-if [ $# -lt 3 ];then invocador="SOMEONE";else invocador=$3; fi
-
-#me fijo si son iguales
-if [ $origen = $destino ]
-then
-	./Logging Mover "se esta intentando mover un archivo a su misma posicion: $origen" WAR
-	exit 0
-fi
+origen=$1
+destino=$2
 
 #me fijo si existe el origen
 if ! [ -f $origen ]
@@ -34,6 +17,26 @@ if ! [ -d ${destino%/*} ]
 then 
 	./Logging Mover "se esta intentando mover hacia un directorio inexistente: ${destino%/*}" ERR
 	exit 2
+fi
+
+#leo directorio el origen 
+cd ${1%/*}
+origen="`pwd`/${1##*/}"
+cd $directorio_ppal
+
+#leo el directorio destino
+cd ${2%/*}
+destino="`pwd`/${2##*/}"
+cd $directorio_ppal
+
+#lee el tercer parametro si no fue dado le pongo cualquier valor
+if [ $# -lt 3 ];then invocador="SOMEONE";else invocador=$3; fi
+
+#me fijo si son iguales
+if [ $origen = $destino ]
+then
+	./Logging Mover "se esta intentando mover un archivo a su misma posicion: $origen" WAR
+	exit 0
 fi
 
 #me fijo si en ese directorio ya existe el archivo destino
