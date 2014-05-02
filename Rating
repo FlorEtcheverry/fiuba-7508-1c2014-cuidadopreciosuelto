@@ -1,0 +1,134 @@
+#!/bin/bash
+
+./Logging Rating "Inicio de Rating" INFO
+
+if ! [ -d $ACEPDIR ]
+then
+	./Logging Rating "No existe el directorio origen" ERR
+	exit 1
+fi
+
+if ! [ -d $INFODIR ]
+then
+	./Logging Rating "No existe el directorio destino" ERR
+	exit 2
+fi
+
+if ! [ -d $INFODIR/pres ] ; then mkdir $INFODIR/pres ; fi
+if ! [ -d $ACEPDIR/proc ] ; then mkdir $ACEPDIR/proc ; fi
+
+archCompras=($ACEPDIR/*.xxx) 
+if [[ ${archCompras[@]} == $ACEPDIR'/*.xxx' ]]
+then
+	cantArchCompras=0
+else
+	cantArchCompras=${#archCompras[@]}
+fi
+
+archPecios=$MAEDIR/precios.mae
+archUnidades=$MAEDIR/um.tab
+
+./Logging Rating "Cantidad de listas de compras a procesar: $cantArchCompras" INFO
+
+if [ $cantArchCompras -eq 0 ]
+then
+	./Logging Rating "No hay archivos de compras a procesar. Fin de Rating" INFO
+	exit 0
+fi
+
+#valido archivo de precios
+#tiene q tener formato: superid;colaborador;fecha(aaaammdd);desprod;precio
+lineasnocumplen=`grep -v '^[^;]*;[^;]*;[0-9]\{4\}[0-1][0-9][0-3][0-9];[^;]*;[0-9]*.[0-9][0-9]$' "$archPecios"`
+#si esta vacio es valido
+if ! [[ "$lineasnocumplen" == '' ]]
+then 
+	echo $lineasnocumplen
+	./Logging Rating "Se cancela por archivo maestro de precios invalido." ERR
+	exit 3
+fi
+
+#para cada archivo de lista de compras
+for arch in $ACEPDIR/*.xxx
+do
+	nombre=${arch##*/} #saca hasta la ultima / (obtiene el nombre del arch con su extension)
+	./Logging Rating "Archivo a procesar: $nombre" INFO
+
+	#verifico que no este duplicado
+	if [ -f $ACEPDIR/proc/"$nombre" ] ; then
+		./Mover $arch $RECHDIR Rating
+		./Logging Rating "Se rechaza archivo $nombre por estar DUPLICADO" INFO
+		continue
+	fi
+
+	#validaciones de arch de lista compras
+	
+	if ! [[ -s $arch ]]
+	then
+		./Mover $arch $RECHDIR Rating
+		./Logging Rating "Se rechaza archivo $nombre por estar vacio" INFO
+		continue
+	fi
+
+	#tiene q tener formato: nro_item;descr
+	lineasnocumplen=`grep -c -v '^[1-9][0-9]*;.*$' "$arch"`
+	#si esta vacio es valido
+	if [ "$lineasnocumplen" -ne '0' ]
+	then 
+		
+		./Mover $arch $RECHDIR Rating
+		./Logging Rating "Se rechaza archivo $nombre por tener formato de campos invalido" INFO
+		continue
+	fi
+
+	#fin validaciones
+
+	echo -n > $INFODIR/pres/$nombre
+
+	#para cada linea del arch de compras (para cada item a comprar)
+	while read -r linea		
+	do
+		numero=`echo $linea | sed 's-^\([1-9][0-9]*\);.*\ \+[^\ ]\+\ *$-\1-g'` #nro de item
+		descr=`echo $linea | sed 's-^[1-9][0-9]*;\(.*\)\ \+[^\ ]\+\ *$-\1-g'` #descripcion
+		unidad=`echo $linea | sed 's-^[1-9][0-9]*;.*\ \+\([^\ ]\+\)\ *$-\1-g'` #unidad de medida
+		coincidencia=`cat $archPecios`
+		
+		#filtra por las coincidencias de la descripcion
+		for word in $descr
+		do
+			coincidencia=`echo "$coincidencia" | grep -w -i $word`
+		done
+		
+		#agarra la linea de la unidad
+		unidades=`grep -w -i $unidad $archUnidades`
+		expReg=''
+		resultado=''
+
+		#para cada unidad equivalente lo pone en resultado
+		for eq in $unidades
+		do
+			eq2=`echo "$eq" | sed 's-^\([^\.]*\)\.\([^\.]*\)$-\1\\\.\2-g'`
+			expReg='^[^;]*;[^;]*;[^;]*;[^;]*\ \+'"$eq2"';[^;]*$'
+			resultadotemp=`echo "$coincidencia" | grep -i "$expReg"`
+			if [[ $resultado == '' ]]
+			then resultado=$resultadotemp
+			elif ! [[ $resultadotemp == '' ]]
+			then resultado=`echo -ne "$resultado\n$resultadotemp"`
+			fi
+		done
+
+		#por cada linea de resultado
+		#grabar en pres nroitem;prod pedido;superid;prod encontrado;precio
+		while read -r i
+		do
+			superid=`echo $i | sed 's-^\([^;]*\);.*-\1-'`
+			encDesc=`echo $i | sed 's-^[^;]*;[^;]*;[^;]*;\([^;]*\);.*$-\1-'`
+			encPrecio=`echo $i | sed 's-^[^;]*;[^;]*;[^;]*;[^;]*;\(.*\)$-\1-'`
+			echo "$numero;$descr;$superid;$encDesc;$encPrecio" >> $INFODIR/pres/$nombre
+		done <<< "$resultado"
+
+	done <$arch
+
+	#mover a /proc
+	./Mover $arch $ACEPDIR/proc/$nombre
+done
+./Logging Rating "Fin de Rating" INFO
