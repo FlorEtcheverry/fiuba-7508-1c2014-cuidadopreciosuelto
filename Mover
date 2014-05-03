@@ -50,7 +50,7 @@ then
 	if ! [ -f $base_destino ]
 	then 
 		#si no esta lo muevo
-		mv $origen $base_destino
+		mv "$origen" "$base_destino"
 		./Logging Mover "ya existia el archivo destino, guardo $origen en: $base_destino" INFO
 	else 
 		#si ya esta busco una extension que le pueda poner y lo muevo
@@ -59,13 +59,13 @@ then
 		do
 			let contador=contador+1
 		done
-		mv $origen "$base_destino.$contador"
+		mv "$origen" "$base_destino.$contador"
 		./Logging Mover "ya existia el archivo destino, guardo $origen en: $base_destino.$contador" INFO
 	fi
 
 #si no existia lo muevo y listo
 else
-	mv $origen $destino
+	mv "$origen" "$destino"
 	./Logging Mover "archivo $origen movido exitosamente" INFO
 fi
 
