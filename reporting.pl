@@ -26,7 +26,6 @@ while ($opcion ne "-exit")
 	{
 		print "No existe comando '$opcion'. Por favor ingrese '-a' para Ayuda.\n";
 		$opcion = <STDIN>;
-		# $opcion = "-exit";
 		next;
 	}
 
@@ -149,9 +148,6 @@ sub CargarArrayLP
 		}
 	}
 
-	# print "en array $array[0]\n";
-	# print "en array $array[1]\n";
-
 	return (@array);
 }
 
@@ -192,16 +188,25 @@ sub MostrarMenuR_Referencia
 
 	if ($_[3] eq "y")
 	{
-		open(SALIDA, ">salida.txt");
-		print SALIDA "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA\n";
-	}
-	else
-	{
-		print "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA\n";
+		($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime;
+		$year += 1900;
+		$mon++;
+		$ext = $year.$mon.$mday.$hour.$min.$sec;
+
+		open(SALIDA, ">info.$ext");
 	}
 
 	for ($i=0; $i<=$_[1]; $i++)
 	{
+		if ($_[3] eq "y")
+		{
+			print SALIDA "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA --> $_[0][$i]\n";
+		}
+		else
+		{
+			print "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA --> $_[0][$i]\n";
+		}
+
 		open (LISTA, $_[0][$i]);
 		$infoSalida = "";
 		
@@ -249,16 +254,25 @@ sub MostrarMenuM_MenorPrecio
 
 	if ($_[4] eq "y")
 	{
-		open(SALIDA,">salida.txt");
-		print SALIDA "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA\n";
-	}
-	else
-	{
-		print "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA\n";
+		($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime;
+		$year += 1900;
+		$mon++;
+		$ext = $year.$mon.$mday.$hour.$min.$sec;
+
+		open(SALIDA,">info.$ext");
 	}
 
 	for (my $i=0; $i<=$_[1];$i++)
 	{
+		if ($_[4] eq "y")
+		{
+			print SALIDA "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA --> $_[0][$i]\n";
+		}
+		else
+		{
+			print "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA --> $_[0][$i]\n";
+		}
+
 		my $idMenor = 0;
 		my $productoMenor = "";
 		my $superIdMenor = 0;
@@ -369,17 +383,26 @@ sub MostrarMenuF_Faltante
 	system("clear");
 
 	if ($_[4] eq "y")
-	{	
-		open(SALIDA,">salida.txt");
-		print SALIDA "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA\n";
-	}
-	else
 	{
-		print "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA\n";
+		($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime;
+		$year += 1900;
+		$mon++;
+		$ext = $year.$mon.$mday.$hour.$min.$sec;
+	
+		open(SALIDA,">info.$ext");
 	}
 
 	for (my $i=0;$i<=$_[1];$i++)
 	{
+		if ($_[4] eq "y")
+		{
+			print SALIDA "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA --> $_[0][$i]\n";
+		}
+		else
+		{
+			print "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA --> $_[0][$i]\n";
+		}
+
 		open (LISTA, $_[0][$i]);
 		$infoSalida = "";
 
