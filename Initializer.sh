@@ -351,7 +351,7 @@ done
 $BINDIR/Logging Initializer "Inicializacion completa" INFO
 
 #mostrar estado final
-echo "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01."
+echo "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright \A9 Grupo 01."
 cd ./conf
 echo "Direct. de configuracion: $CONFDIR"
 echo "Archivos de configuracion `ls`"
@@ -377,7 +377,7 @@ pid=`echo $pid | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'`
 
 if [ "$pid" != "" ]
 then
-	echo "Listenes corriendo bajo el numero: $pid"
+	echo "Listener corriendo bajo el numero: $pid"
 fi
 
 exit 0
