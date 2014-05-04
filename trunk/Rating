@@ -17,13 +17,13 @@ fi
 if ! [ -d $INFODIR/pres ] ; then mkdir $INFODIR/pres ; fi
 if ! [ -d $ACEPDIR/proc ] ; then mkdir $ACEPDIR/proc ; fi
 
-archCompras=($ACEPDIR/*.xxx) 
-if [[ ${archCompras[@]} == $ACEPDIR'/*.xxx' ]]
-then
-	cantArchCompras=0
-else
-	cantArchCompras=${#archCompras[@]}
-fi
+shopt -s nullglob
+
+archCompras=($ACEPDIR/*.[!-][!-][!-]) 
+
+cantArchCompras=${#archCompras[@]}
+
+shopt -u nullglob
 
 archPecios=$MAEDIR/precios.mae
 archUnidades=$MAEDIR/um.tab
@@ -48,7 +48,7 @@ then
 fi
 
 #para cada archivo de lista de compras
-for arch in $ACEPDIR/*.xxx
+for arch in $ACEPDIR/*.[!-][!-][!-]
 do
 	nombre=${arch##*/} #saca hasta la ultima / (obtiene el nombre del arch con su extension)
 	./Logging Rating "Archivo a procesar: $nombre" INFO
