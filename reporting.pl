@@ -12,7 +12,7 @@ while ($opcion ne "-exit")
 	# print "\n\n";
 	print "----------------------------------------------------------------------------------\n";
 	print "1ra entrada --> Opcion de proceso ('-a' para mas informacion | '-exit' para salir)\n";
-	print "2da entrada --> Path de la carpata con Listas Presupuestadas\n";
+	print "2da entrada --> Path de la carpeta con Listas Presupuestadas\n";
 	print "3ra entrada --> Filtro de usuario\n";
 	print "4ta entrada --> Filtro de Supermercado\n";
 	print "5ta entrada --> Opcion de grabado ('-w') [y/n]\n";
@@ -55,6 +55,7 @@ while ($opcion ne "-exit")
 		# -----------------------------------------------
 		# Cargamos en un array todas las listas del path.
 		# -----------------------------------------------
+
 		@arrayLP = &CargarArrayLP($pathLP, $filtroUsuario);
 
 		open(SUPER, "SUPER.MAE") || die "ERROR: el archivo de SUPER.MAE no existe";
@@ -102,9 +103,14 @@ while ($opcion ne "-exit")
 		
 		if ($opcion eq "-dr")
 		{
-			print "proximamente\n";
+			if ($opcionDeGrabado eq "y"){
+				&MostrarMenuDR_DondeComprarYReferenciaArch(\@arrayLP, $filtroSuper, \%hashSuper ,$#arrayLP);
+			}
+			else{
+				&MostrarMenuDR_DondeComprarYReferenciaPantalla(\@arrayLP, $filtroSuper, \%hashSuper ,$#arrayLP);
+			}
 		}
-		
+
 		close (LISTA_PRESUPUESTADA);
 		close (SUPER);
 	}
@@ -463,3 +469,243 @@ sub MostrarMenuF_Faltante
 		close(SALIDA);
 	}
 }
+
+#/home/juan/Documents/facultad/fiuba-7508-1c2014-cuidadopreciosuelto/informes/pres
+
+# ------------------------------------------
+# SUB, Muestra la info de precios de referencia agrupados por lugar e imprime a un archivo.
+# ------------------------------------------
+sub MostrarMenuDR_DondeComprarYReferenciaArch
+{
+
+	($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime;
+	$year += 1900;
+	$mon++;
+	$ext = $year.$mon.$mday.$hour.$min.$sec;
+	open(SALIDA,">info.$ext");
+
+	for ( my $i=0; $i<=$_[3]; $i++ ){
+
+	print SALIDA "NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   --> $_[0][$i]\n";
+
+		
+		open (LISTA, $_[0][$i]);
+
+
+		#me creo hashes que tendran los productos como claves
+		my %hashPrecios=();
+		my %hashPreciosCuidados=();
+		my %hashLugares=();
+
+
+		my @arrayLineaProducto=();
+
+
+		while($linea = <LISTA>){
+
+			#obtengo los campos del registro de la lista presupuesteada que estoy analizando 
+			@arrayLineaProducto = split(";", $linea);
+
+			#Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
+			#si lo es guardo el menor de los precios cuidados y saltear.
+			if ( $arrayLineaProducto[2] < 100 ){
+				if (! exists( $hashPreciosCuidados{$arrayLineaProducto[1]} ) ) {
+					$hashPreciosCuidados{$arrayLineaProducto[1]}=$arrayLineaProducto[4];
+				}#si esta obviamente comparo y si el precio es mejor reemplazo
+				else{
+					if ( $hashPreciosCuidados{$arrayLineaProducto[1]} > $arrayLineaProducto[4] ){
+						$hashPreciosCuidados{$arrayLineaProducto[1]}=$arrayLineaProducto[4];
+					}
+				}
+				next;
+			}
+			#Ahora si no es precio cuidado:
+			#si el producto no esta en el hash lo meto con el precio y el super ID en el otro hash
+			if (! exists( $hashPrecios{$arrayLineaProducto[1]} ) ) {
+				$hashPrecios{$arrayLineaProducto[1]}=$arrayLineaProducto[4];
+				$hashLugares{$arrayLineaProducto[1]}=$arrayLineaProducto[2];
+			}#si esta obviamente comparo y si el precio es mejor reemplazo
+			else{
+				#COMPARAR PRECIO ; REEMPLAZAR PRECIO Y LUGAR SI CORRESPONDE!!
+				if ( $hashPrecios{$arrayLineaProducto[1]} > $arrayLineaProducto[4] ){
+					$hashPrecios{$arrayLineaProducto[1]} = $arrayLineaProducto[4];
+					$hashLugares{$arrayLineaProducto[1]} = $arrayLineaProducto[2];
+				}
+			}
+		}
+
+		#necesito hacer esta basura o no empieza a recorrer por el ppio de nuevo
+		close (LISTA);
+		open (LISTA, $_[0][$i]);
+		
+		#todavia estando en la misma lista de presupuestos
+		#recorro de nuevo separando por lugares, mostrando el precio cuidado correspondiente y el menor precio que encontre antes
+		my $Super_ID="";
+		my $cambioLugar = 0;
+
+		while($linea = <LISTA>){
+			@arrayLineaProducto = split(";", $linea);
+			
+
+			#el lugar viene dado por el super ID
+			if ($Super_ID == ""){
+				$Super_ID = $arrayLineaProducto[2];
+				$cambioLugar = 1;
+			}else{
+				if ( $Super_ID == $arrayLineaProducto[2] ){
+					$cambioLugar = 0;
+				}else{
+					print SALIDA "\n";	
+					$Super_ID = $arrayLineaProducto[2];
+					$cambioLugar = 1;
+				}
+			}
+
+			my $observ="";
+
+			if ( $cambioLugar ){
+			#recorro hashLugares por claves, si encuentro un value coincidente uso la clave para hash precios e imprimo ; luego elimino ese producto de ambos hashes
+				foreach $clave (keys %hashPrecios){
+
+					if ( $hashLugares{$clave} eq $Super_ID ) {
+						if ( $hashPrecios{$clave} > $hashPreciosCuidados{$clave} )
+							{ $observ="**" ;}
+						if ( $hashPrecios{$clave} <= $hashPreciosCuidados{$clave} )
+							{ $observ="*" ;}
+						if ( $hashPreciosCuidados{$clave} == "" )
+							{ $observ="***" ;}
+
+#NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
+
+						print SALIDA "$_[2]{$Super_ID} \| FALTA NUM ITEM (otro hash) \| $clave \| FALTA DESCRIPCION (otro hash) \| $hashPrecios{$clave} \| $hashPreciosCuidados{$clave} \| $observ \n";
+					#necesarios si no ordeno el archivo por lugares
+					delete($hashPrecios{$clave});
+					delete($hashPrecios{$clave});
+					}
+				}
+			}
+
+		}
+
+		close(LISTA);		
+	}
+
+	close(SALIDA);
+}
+
+
+#/home/juan/Documents/facultad/fiuba-7508-1c2014-cuidadopreciosuelto/informes/pres
+
+# ------------------------------------------
+# SUB, Idem anterior pero esta imprime por pantalla. De hecho es copiada tal cual y solo cambio que mando los prints a pantalla y saco las cosas del archivo de salida.
+# ------------------------------------------
+
+sub MostrarMenuDR_DondeComprarYReferenciaPantalla
+{
+
+	for ( my $i=0; $i<=$_[3]; $i++ ){
+
+		print "NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   --> $_[0][$i]\n";
+		
+		open (LISTA, $_[0][$i]);
+
+
+		#me creo hashes que tendran los productos como claves
+		my %hashPrecios=();
+		my %hashPreciosCuidados=();
+		my %hashLugares=();
+
+
+		my @arrayLineaProducto=();
+
+
+		while($linea = <LISTA>){
+
+			#obtengo los campos del registro de la lista presupuesteada que estoy analizando 
+			@arrayLineaProducto = split(";", $linea);
+
+			#Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
+			#si lo es guardo el menor de los precios cuidados y saltear.
+			if ( $arrayLineaProducto[2] < 100 ){
+				if (! exists( $hashPreciosCuidados{$arrayLineaProducto[1]} ) ) {
+					$hashPreciosCuidados{$arrayLineaProducto[1]}=$arrayLineaProducto[4];
+				}#si esta obviamente comparo y si el precio es mejor reemplazo
+				else{
+					if ( $hashPreciosCuidados{$arrayLineaProducto[1]} > $arrayLineaProducto[4] ){
+						$hashPreciosCuidados{$arrayLineaProducto[1]}=$arrayLineaProducto[4];
+					}
+				}
+				next;
+			}
+			#Ahora si no es precio cuidado:
+			#si el producto no esta en el hash lo meto con el precio y el super ID en el otro hash
+			if (! exists( $hashPrecios{$arrayLineaProducto[1]} ) ) {
+				$hashPrecios{$arrayLineaProducto[1]}=$arrayLineaProducto[4];
+				$hashLugares{$arrayLineaProducto[1]}=$arrayLineaProducto[2];
+			}#si esta obviamente comparo y si el precio es mejor reemplazo
+			else{
+				#COMPARAR PRECIO ; REEMPLAZAR PRECIO Y LUGAR SI CORRESPONDE!!
+				if ( $hashPrecios{$arrayLineaProducto[1]} > $arrayLineaProducto[4] ){
+					$hashPrecios{$arrayLineaProducto[1]} = $arrayLineaProducto[4];
+					$hashLugares{$arrayLineaProducto[1]} = $arrayLineaProducto[2];
+				}
+			}
+		}
+
+		#necesito hacer esta basura o no empieza a recorrer por el ppio de nuevo
+		close (LISTA);
+		open (LISTA, $_[0][$i]);
+		
+		#todavia estando en la misma lista de presupuestos
+		#recorro de nuevo separando por lugares, mostrando el precio cuidado correspondiente y el menor precio que encontre antes
+		my $Super_ID="";
+		my $cambioLugar = 0;
+
+		while($linea = <LISTA>){
+			@arrayLineaProducto = split(";", $linea);
+			#el lugar viene dado por el super ID
+			if ($Super_ID == ""){
+				$Super_ID = $arrayLineaProducto[2];
+				$cambioLugar = 1;
+			}else{
+				if ( $Super_ID == $arrayLineaProducto[2] ){
+					$cambioLugar = 0;
+				}else{
+					print "\n";	
+					$Super_ID = $arrayLineaProducto[2];
+					$cambioLugar = 1;
+				}
+			}
+
+			my $observ="";
+
+			if ( $cambioLugar ){
+			#recorro hashLugares por claves, si encuentro un value coincidente uso la clave para hash precios e imprimo ; luego elimino ese producto de ambos hashes
+				foreach $clave (keys %hashPrecios){
+
+					if ( $hashLugares{$clave} eq $Super_ID ) {
+						if ( $hashPrecios{$clave} > $hashPreciosCuidados{$clave} )
+							{ $observ="**" ;}
+						if ( $hashPrecios{$clave} <= $hashPreciosCuidados{$clave} )
+							{ $observ="*" ;}
+						if ( $hashPreciosCuidados{$clave} == "" )
+							{ $observ="***" ;}
+
+#NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
+
+						print "$_[2]{$Super_ID} \| FALTA NUM ITEM (otro hash) \| $clave \| FALTA DESCRIPCION (otro hash) \| $hashPrecios{$clave} \| $hashPreciosCuidados{$clave} \| $observ \n";
+					#necesarios si no ordeno el archivo por lugares
+					delete($hashPrecios{$clave});
+					delete($hashPrecios{$clave});
+					}
+				}
+			}
+
+		}
+
+		close(LISTA);		
+	}
+
+}
+
+
