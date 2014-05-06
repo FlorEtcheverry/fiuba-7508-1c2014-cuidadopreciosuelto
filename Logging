@@ -28,7 +28,7 @@ sub verificarTam{
 	my($archivo) = @_;
 	my $tam_archivo = `wc -c $archivo`;
 	my @tam_archivo=split(" ",`wc -c $archivo`);
-	if( $ENV{LOGSIZE}==0) return(0);
+	if( $ENV{LOGSIZE}==0){return(0);}
 	if( ($ENV{LOGSIZE}*1024) < $tam_archivo[0] ){
 		system("tail -n 50 $archivo > temp~");
 		system("mv temp~ $archivo");
