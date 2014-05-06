@@ -17,6 +17,8 @@ function Pregunta_SiNo {
 	do
 		read Acepta
 		Acepta=`echo "$Acepta" | tr '[:upper:]' '[:lower:]'`
+		if [ "$Acepta" == "s" ];then Acepta="si";fi
+		if [ "$Acepta" == "n" ];then Acepta="no";fi
 		if [ "$Acepta" != "si" -a "$Acepta" != "no" ]; then
 			echo "No se ingreso una opcion valida. Acepta? Si - No"
 		fi
@@ -61,12 +63,15 @@ function Verificar_tamano {
 }
 
 function Verificar_tamano_disco {
-	lineaDiscoDisponible=`df -h | grep "sda1" | tr -s " "`
-	# obtengo tamano del disco con la unidad incluida (Gb)
-	espacioDisponible=`echo $lineaDiscoDisponible | cut -f4 -d ' ' `  
+	lineaDiscoDisponible=`df --block-size M /home` 
+	lineaDiscoDisponible=`echo "$lineaDiscoDisponible" | grep -v "Filesystem"`
+
+	# obtengo tamano disponible del disco 
+	espacioDisponible=`echo $lineaDiscoDisponible | cut -f 4 -d ' '`  
+	
 	# obtengo unicamente el numero del espacio disponible en disco. saco unidades
-	espacioDisponible=`echo $espacioDisponible | sed -n 's/\(^.*\),.*G/\1/p'`
-	let espacioDisponible=`expr $espacioDisponible*1024`
+	espacioDisponible=`echo $espacioDisponible | sed -n 's-^\(.*\)M$-\1-p'`
+
 	echo $espacioDisponible
 }
 
