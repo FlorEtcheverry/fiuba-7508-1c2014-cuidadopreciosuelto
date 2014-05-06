@@ -1,13 +1,9 @@
 #!/bin/bash
 #declaraciones
 export GRUPO01=`pwd`
-export CONFDIR="conf"
+export CONFDIR="$GRUPO01/conf"
 
-#borrar
 clear
-#rm "$GRUPO01/$CONFDIR/Installer.log"
-#rm "$GRUPO01/$CONFDIR/Installer.conf"
-#borrar
 
 #funciona verificacion
 function Pregunta_SiNo {
@@ -37,7 +33,7 @@ function Verificar_perl {
 Para instalar el TP es necesario contar con Perl 5 o superior. Efectue su instalacion e intentelo nuevamente.
 Proceso de Instalacion Cancelado"
 
-		./datos/Logging Installer "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01
+		./datos/bin/Logging Installer "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01
 Para instalar el TP es necesario contar con Perl 5 o superior. Efectue su instalacion e intentelo nuevamente.
 Proceso de Instalacion Cancelado" ERROR
 
@@ -45,7 +41,7 @@ Proceso de Instalacion Cancelado" ERROR
 	fi
 	echo "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01
 Perl Version: $Perl"
- 	./datos/Logging Installer "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01
+ 	./datos/bin/Logging Installer "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01
 Perl Version: $Perl" INFO
 }
 
@@ -97,7 +93,7 @@ function Obtener_path {
 		Resultadoparcial=$3	
 	fi
 	
-	./datos/Logging Installer "$2 $Resultadoparcial" INFO
+	./datos/bin/Logging Installer "$2 $Resultadoparcial" INFO
     	eval $Resultado="'$Resultadoparcial'"
 }
 
@@ -117,11 +113,11 @@ function Obtener_valor {
 	if [ "$Resultadoparcial" == "" ]
 	then
 		echo "El valor ingresado para $1 es inválido, se tomará el predeterminado: $3"
-		./datos/Logging Installer "Error: El valor ingresado para $1 es inválido, se tomará el predeterminado." ERR
+		./datos/bin/Logging Installer "Error: El valor ingresado para $1 es inválido, se tomará el predeterminado." ERR
 		Resultadoparcial=$3	
 	fi
 
-	./datos/Logging Installer "$2 $Resultadoparcial" INFO
+	./datos/bin/Logging Installer "$2 $Resultadoparcial" INFO
 	eval $Resultado="'$Resultadoparcial'"
 }
 
@@ -139,7 +135,7 @@ function Obtener_numero {
 	if [ "$Resultadoparcial" == "ERROR" ] 
 	then
 		echo "Error: El número ingresado para $1 es inválido, se tomará el predeterminado: $4"
-		./datos/Logging Installer "Error: El número ingresado para $1 es inválido, se tomará el predeterminado." ERR
+		./datos/bin/Logging Installer "Error: El número ingresado para $1 es inválido, se tomará el predeterminado." ERR
 		Resultadoparcial=$4
 		eval $Resultado="'$Resultadoparcial'"
 		return 0
@@ -149,7 +145,7 @@ function Obtener_numero {
 	then
 		Resultadoparcial=$4
 	fi
-	./datos/Logging Installer "$2 $Resultadoparcial" INFO
+	./datos/bin/Logging Installer "$2 $Resultadoparcial" INFO
 	eval $Resultado="'$Resultadoparcial'"
 }
 
@@ -161,8 +157,10 @@ function Path_y_Archivos {
 	then	
 		if [ -d "$2" ]
 		then
-			archivos=`ls -1 "$2"`
-		fi	
+			archivos=`ls -1 "$2"`	
+		else 
+			archivos=" "
+		fi
 	else
 		archivos=" "
 	fi	
@@ -175,7 +173,7 @@ $archivos "
 		resultado="$1 $2"
 	fi
 	echo "$resultado"
-	./datos/Logging Installer "$resultado" INFO
+	./datos/bin/Logging Installer "$resultado" INFO
 }
 #Creo directorios
 
@@ -289,15 +287,15 @@ function Instalacion_archivos {
 #	Copiar_archivos "$GRUPO01/datos" "*.sh" "$GRUPO01"/"$BINDIR"
 #	Copiar_archivos "$GRUPO01/datos" "*.pl" "$GRUPO01"/"$BINDIR"	
 
-	Copiar_archivos "$GRUPO01/datos" "Start" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "Stop" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "Mover" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "Rating" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "Reporting" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "Logging" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "Listener" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "Masterlist" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "Initializer" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Start" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Stop" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Mover" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Rating" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Reporting" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Logging" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Listener" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Masterlist" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Initializer" "$BINDIR"
 }
 #Actualizo archivos de configuracion
 function Actualizacion_archivos_configuracion {
@@ -318,7 +316,7 @@ INFODIR=$INFODIR=$USER=$date
 RECHDIR=$RECHDIR=$USER=$date
 LOGDIR=$LOGDIR=$USER=$date
 LOGEXT=$LOGEXT=$USER=$date
-LOGSIZE=$LOGSIZE=$USER=$date" >> "$GRUPO01/$CONFDIR/Installer.conf"
+LOGSIZE=$LOGSIZE=$USER=$date" >> "$CONFDIR/Installer.conf"
 
 }
 
@@ -326,7 +324,7 @@ LOGSIZE=$LOGSIZE=$USER=$date" >> "$GRUPO01/$CONFDIR/Installer.conf"
 # que se encuentra en el archivo de configuracion
 # $1:Variable
 function Tomar_Variable { 
-	declare local var=`grep '^'$1'=[^=]*=[^=]*=[^=]*$' "$GRUPO01/$CONFDIR/Installer.conf" | sed 's@^[^=]*=\([^=]*\)=.*@\1@'`
+	declare local var=`grep '^'$1'=[^=]*=[^=]*=[^=]*$' "$CONFDIR/Installer.conf" | sed 's@^[^=]*=\([^=]*\)=.*@\1@'`
 	
 	if [  "$1" == DATASIZE  -o  "$1" == LOGSIZE  ] 
 	then
@@ -336,7 +334,7 @@ function Tomar_Variable {
 	if [ "$var" == "" ] 
 	then
 		echo "Error: registro $1 inexistente o mal formado en el archivo de configuración."
-		./datos/Logging Installer "Error: registro $1 inexistente o mal formado en el archivo de configuración." ERR
+		./datos/bin/Logging Installer "Error: registro $1 inexistente o mal formado en el archivo de configuración." ERR
 		echo "Por favor, vuelva a instalar el sistema siguiendo el README desde el comienzo."
 		exit 1
 	fi
@@ -395,7 +393,7 @@ function Verificar_archivos_faltantes {
 	then
 		Faltantes="$Faltantes 
 		Initializer"
-		if [ ! -f  "$GRUPO01/datos/Initializer" ]
+		if [ ! -f  "$GRUPO01/datos/bin/Initializer" ]
 		 then
 			ERROR=1
 		fi
@@ -404,7 +402,7 @@ function Verificar_archivos_faltantes {
 	then
 		Faltantes="$Faltantes 
 		Listener"
-		if [ ! -f  "$GRUPO01/datos/Listener" ]
+		if [ ! -f  "$GRUPO01/datos/bin/Listener" ]
 		 then
 			ERROR=1
 		fi
@@ -413,7 +411,7 @@ function Verificar_archivos_faltantes {
 	then
 		Faltantes="$Faltantes 
 		Masterlist"
-		if [ ! -f  "$GRUPO01/datos/Masterlist" ]
+		if [ ! -f  "$GRUPO01/datos/bin/Masterlist" ]
 		 then
 			ERROR=1
 		fi
@@ -422,7 +420,7 @@ function Verificar_archivos_faltantes {
 	then
 		Faltantes="$Faltantes 
 		Logging"
-		if [ ! -f  "$GRUPO01/datos/Logging" ]
+		if [ ! -f  "$GRUPO01/datos/bin/Logging" ]
 		 then
 			ERROR=1
 		fi
@@ -431,7 +429,7 @@ function Verificar_archivos_faltantes {
 	then
 		Faltantes="$Faltantes 
 		Mover"
-		if [ ! -f  "$GRUPO01/datos/Mover" ]
+		if [ ! -f  "$GRUPO01/datos/bin/Mover" ]
 		 then
 			ERROR=1
 		fi
@@ -440,7 +438,7 @@ function Verificar_archivos_faltantes {
 	then
 		Faltantes="$Faltantes 
 		Rating"
-		if [ ! -f  "$GRUPO01/datos/Rating" ]
+		if [ ! -f  "$GRUPO01/datos/bin/Rating" ]
 		 then
 			ERROR=1
 		fi
@@ -449,7 +447,7 @@ function Verificar_archivos_faltantes {
 	then
 		Faltantes="$Faltantes 
 		Start"
-		if [ ! -f  "$GRUPO01/datos/Start" ]
+		if [ ! -f  "$GRUPO01/datos/bin/Start" ]
 		 then
 			ERROR=1
 		fi
@@ -458,7 +456,7 @@ function Verificar_archivos_faltantes {
 	then
 		Faltantes="$Faltantes 
 		Stop"
-		if [ ! -f  "$GRUPO01/datos/Stop" ]
+		if [ ! -f  "$GRUPO01/datos/bin/Stop" ]
 		 then
 			ERROR=1
 		fi
@@ -467,7 +465,7 @@ function Verificar_archivos_faltantes {
 	then
 		Faltantes="$Faltantes 
 		Reporting"
-		if [ ! -f  "$GRUPO01/datos/Reporting" ]
+		if [ ! -f  "$GRUPO01/datos/bin/Reporting" ]
 		 then
 			ERROR=1
 		fi
@@ -477,94 +475,94 @@ function Verificar_archivos_faltantes {
 	#LISTO DIRECTORIOS.
 	echo
 	echo "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01"
-	./datos/Logging Installer "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01" INFO
+	./datos/bin/Logging Installer "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01" INFO
 	echo "Direct. de Configuracion: /$BINDIR/ Archivos:"
-	./datos/Logging Installer "Direct. de Configuracion: /$BINDIR/ Archivos:" INFO
+	./datos/bin/Logging Installer "Direct. de Configuracion: /$BINDIR/ Archivos:" INFO
 	if [ -d "$BINDIR" ] 
 	then
 		ls "$BINDIR"
 		Archivosbin=`ls "$BINDIR" `
-		./datos/Logging Installer "$Archivosbin" INFO
+		./datos/bin/Logging Installer "$Archivosbin" INFO
 	else
 		echo "Directorio $BINDIR inexistente" 
-		./datos/Logging Installer "Directorio $BINDIR inexistente" ERR
+		./datos/bin/Logging Installer "Directorio $BINDIR inexistente" ERR
 		conf_roto=1
 	fi
 	echo
 	echo "Direct Maestros y Tablas: /$MAEDIR/ Archivos:"
-	./datos/Logging Installer "Direct Maestros y Tablas: /$MAEDIR/ Archivos:" INFO
+	./datos/bin/Logging Installer "Direct Maestros y Tablas: /$MAEDIR/ Archivos:" INFO
 	if [ -d "$MAEDIR" ]
 	then
 		ls "$MAEDIR"
 		Archivosmae=`ls "$MAEDIR" `
-		./datos/Logging Installer "$Archivosmae" INFO
+		./datos/bin/Logging Installer "$Archivosmae" INFO
 	else
 		echo "Directorio $MAEDIR inexistente"
-		./datos/Logging Installer "Directorio $MAEDIR inexistente" ERR
+		./datos/bin/Logging Installer "Directorio $MAEDIR inexistente" ERR
 		conf_roto=1
 	fi
 	echo
 	echo "Direct. de Configuracion: /$CONFDIR/ Archivos:"
-	./datos/Logging Installer "Direct. de Configuracion: /$CONFDIR/ Archivos:" INFO
+	./datos/bin/Logging Installer "Direct. de Configuracion: /$CONFDIR/ Archivos:" INFO
 	if [ -d "$CONFDIR" ] 
 	then
 		ls "$CONFDIR"
 		Archivosconf=`ls "$CONFDIR" `
-		./datos/Logging Installer "$Archivosconf" INFO
+		./datos/bin/Logging Installer "$Archivosconf" INFO
 	else
 		echo "Directorio $CONFDIR inexistente"
-		./datos/Logging Installer "Directorio $CONFDIR inexistente" ERR
+		./datos/bin/Logging Installer "Directorio $CONFDIR inexistente" ERR
 		conf_roto=1
 	fi
 	if [ ! -d "$NOVEDIR" ] 
 	then
 		echo "Directorio $NOVEDIR inexistente"
-		./datos/Logging Installer "Directorio $NOVEDIR inexistente" ERR
+		./datos/bin/Logging Installer "Directorio $NOVEDIR inexistente" ERR
 		conf_roto=1
 	else 
 		echo "Directorio de Novedades: $NOVEDIR"
-		./datos/Logging Installer "Directorio de Novedades: $NOVEDIR" INFO
+		./datos/bin/Logging Installer "Directorio de Novedades: $NOVEDIR" INFO
 	fi
 	if [ ! -d "$ACEPDIR" ] 
 	then
 		echo "Directorio $ACEPDIR inexistente"
-		./datos/Logging Installer "Directorio $ACEPDIR inexistente" ERR
+		./datos/bin/Logging Installer "Directorio $ACEPDIR inexistente" ERR
 		conf_roto=1
 	else
 		echo "Novedades Aceptadas: $ACEPDIR"
-		./datos/Logging Installer "Novedades Aceptadas: $ACEPDIR" INFO
+		./datos/bin/Logging Installer "Novedades Aceptadas: $ACEPDIR" INFO
 	fi
 	if [ ! -d "$RECHDIR" ] 
 	then
 		echo "Directorio $RECHDIR inexistente"
-		./datos/Logging Installer "Directorio $RECHDIR inexistente" ERR
+		./datos/bin/Logging Installer "Directorio $RECHDIR inexistente" ERR
 		conf_roto=1
 	else
 		echo "Novedades Rechazadas: $RECHDIR"
-		./datos/Logging Installer "Novedades Rechazadas: $RECHDIR" INFO
+		./datos/bin/Logging Installer "Novedades Rechazadas: $RECHDIR" INFO
 	fi
 	if [ ! -d "$INFODIR" ] 
 	then
 		echo "Directorio $INFODIR inexistente"
-		./datos/Logging Installer "Directorio $INFODIR inexistente" ERR
+		./datos/bin/Logging Installer "Directorio $INFODIR inexistente" ERR
 		conf_roto=1
 	else
 		echo "Dir informes de salida: $INFODIR"
-		./datos/Logging Installer "Dir informes de salida: $INFODIR" INFO
+		./datos/bin/Logging Installer "Dir informes de salida: $INFODIR" INFO
 	fi
 	if [ ! -d "$LOGDIR" ] 
 	then
 		echo "Directorio $LOGDIR inexistente"
-		./datos/Logging Installer "Directorio $LOGDIR inexistente" ERR
+		./datos/bin/Logging Installer "Directorio $LOGDIR inexistente" ERR
 		conf_roto=1
 	else
 		echo "Directorio de Logs de Comandos: $LOGDIR/<comando> $LOGEXT"
-		./datos/Logging Installer "Directorio de Logs de Comandos: $LOGDIR/<comando> $LOGEXT" INFO
+		./datos/bin/Logging Installer "Directorio de Logs de Comandos: $LOGDIR/<comando> $LOGEXT" INFO
 	fi	
 	echo "Estado de la instalación: COMPLETA"
-	./datos/Logging Installer "Estado de la instalacion: COMPLETA" INFO
+	./datos/bin/Logging Installer "Estado de la instalacion: COMPLETA" INFO
 	echo "Proceso de Instalacion Cancelado"
-	./datos/Logging Installer "Proceso de Instalacion Cancelado" INFO
+	./datos/bin/Logging Installer "Proceso de Instalacion Cancelado" INFO
 
 	#imprimo faltantes
 	#echo "Faltan: $Faltantes"
@@ -572,19 +570,19 @@ function Verificar_archivos_faltantes {
 	then
 		echo "Estado de la instalacion: COMPLETA
 Proceso de instalacion cancelado." 
-		./datos/Logging Installer "Estado de la instalacion: COMPLETA" INFO
-		./datos/Logging Installer "Proceso de instalacion cancelado." INFO
+		./datos/bin/Logging Installer "Estado de la instalacion: COMPLETA" INFO
+		./datos/bin/Logging Installer "Proceso de instalacion cancelado." INFO
 		exit 0;
 	else 
 		if [ $conf_roto -ne 0 ] 
 		then
 			echo "Se rompio el archivo de configuracion."
-			./datos/Logging Installer "Se rompio el archivo de configuracion." INFO
+			./datos/bin/Logging Installer "Se rompio el archivo de configuracion." INFO
 		fi
 		echo "Estado de la instalacion: Incompleto"
 		echo "Faltan Archivos: $Faltantes"
-		./datos/Logging Installer "Faltan Archivos: $Faltantes" INFO
-		./datos/Logging Installer "Estado de la instalacion: Incompleto" INFO
+		./datos/bin/Logging Installer "Faltan Archivos: $Faltantes" INFO
+		./datos/bin/Logging Installer "Estado de la instalacion: Incompleto" INFO
 		Pregunta_SiNo "Desea completar la instalacion? (si-no)"
 		if [ "$?" == 0 ] 
 		then
@@ -618,9 +616,9 @@ then
 	touch "$CONFDIR/Installer.log"
 fi	
 echo "Log de la instalacion: $GRUPO01/$CONFDIR/Installer.log"
-./datos/Logging Installer "Log de la instalacion: $CONFDIR/Installer.log" INFO
+./datos/bin/Logging Installer "Log de la instalacion: $CONFDIR/Installer.log" INFO
 echo "Directorio predefinido de Configuracion: $CONFDIR"
-./datos/Logging Installer "Directorio predefinido de Configuracion: $CONFDIR" INFO
+./datos/bin/Logging Installer "Directorio predefinido de Configuracion: $CONFDIR" INFO
 
 if [ $yaSeInstalo -eq 1 ]
 then	
@@ -670,7 +668,7 @@ else
 			espacioDisponible=$(Verificar_tamano_disco)
 			while [ $espacioDisponible -lt $DATASIZE ]
 			do
-				./datos/Logging Installer "Insuficiente espacio en disco.
+				./datos/bin/Logging Installer "Insuficiente espacio en disco.
 Espacio disponible: $espacioDisponible Mb.
 Espacio requerido $DATASIZE Mb
 Cancele la instalacion o intentelo nuevamente." ERR
@@ -725,7 +723,7 @@ Cancele la instalacion o intentelo nuevamente." ERR
 			Path_y_Archivos "Directiorio Novedades Aceptadas:" "$ACEPDIR" 0
 			Path_y_Archivos "Directorio Informes de Salida:" "$INFODIR" 0
 			Path_y_Archivos "Directorio Archivos Rechazados:" "$RECHDIR" 0
-			echo "Directorio de Logs de Comandos: $LOGDIR /<comando>.$LOGEXT"
+			echo "Directorio de Logs de Comandos: $LOGDIR /<comando>$LOGEXT"
 			echo "Tamano maximo para los archivos de log del sistema:" "$LOGSIZE" "Kb"
 			echo "Estado de la instalacion: LISTA"
 			Pregunta_SiNo "Iniciando Instalación. Esta Ud. seguro? (Si-No)"
@@ -735,7 +733,7 @@ Cancele la instalacion o intentelo nuevamente." ERR
 			then
 				respuestaInstalacion="no"
 			fi
-			./datos/Logging Installer "Iniciando Instalacion. Esta Ud. seguro? (Si-No): $respuestaInstalacion" INFO
+			./datos/bin/Logging Installer "Iniciando Instalacion. Esta Ud. seguro? (Si-No): $respuestaInstalacion" INFO
 		done
 		Creacion_de_directorios
 		Instalacion_archivos
@@ -744,7 +742,7 @@ Cancele la instalacion o intentelo nuevamente." ERR
 
 		Actualizacion_archivos_configuracion
 		echo "INSTALACION CONCLUIDA"
-		./datos/Logging Installer "Intalacion CONCLUIDA" INFO 
+		./datos/bin/Logging Installer "Intalacion CONCLUIDA" INFO 
 	fi
 	chmod 777 "$BINDIR"/Initializer
 fi
