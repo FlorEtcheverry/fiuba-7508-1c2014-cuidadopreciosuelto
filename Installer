@@ -203,17 +203,59 @@ function Crear_directorios {
 
 function Creacion_de_directorios {
 	echo "Creando estructuras de directorio . . . ."
-	Crear_directorios "$BINDIR" "$GRUPO01"
-	Crear_directorios "$MAEDIR" "$GRUPO01"
-	Crear_directorios "$MAEDIR/precios" "$GRUPO01"
-	Crear_directorios "$MAEDIR/precios/proc" "$GRUPO01"
-	Crear_directorios "$NOVEDIR" "$GRUPO01"
-	Crear_directorios "$ACEPDIR" "$GRUPO01"
-	Crear_directorios "$ACEPDIR/proc" "$GRUPO01"
-	Crear_directorios "$INFODIR" "$GRUPO01"
-	Crear_directorios "$INFODIR/pres" "$GRUPO01"
-	Crear_directorios "$RECHDIR" "$GRUPO01"
-	Crear_directorios "$LOGDIR" "$GRUPO01"
+#	Crear_directorios "$BINDIR" "$GRUPO01"
+#	Crear_directorios "$MAEDIR" "$GRUPO01"
+#	Crear_directorios "$MAEDIR/precios" "$GRUPO01"
+#	Crear_directorios "$MAEDIR/precios/proc" "$GRUPO01"
+#	Crear_directorios "$NOVEDIR" "$GRUPO01"
+#	Crear_directorios "$ACEPDIR" "$GRUPO01"
+#	Crear_directorios "$ACEPDIR/proc" "$GRUPO01"
+#	Crear_directorios "$INFODIR" "$GRUPO01"
+#	Crear_directorios "$INFODIR/pres" "$GRUPO01"
+#	Crear_directorios "$RECHDIR" "$GRUPO01"
+#	Crear_directorios "$LOGDIR" "$GRUPO01"
+	
+	dir_actual=`pwd`
+	
+	Crear_directorios "$BINDIR"
+	cd "$BINDIR"
+	BINDIR=`pwd`
+	cd "$dir_actual"
+
+	Crear_directorios "$MAEDIR"
+	Crear_directorios "$MAEDIR/precios"
+	Crear_directorios "$MAEDIR/precios/proc"
+	cd "$MAEDIR"
+	MAEDIR=`pwd`
+	cd "$dir_actual"
+	
+	
+	Crear_directorios "$NOVEDIR"
+	cd "$NOVEDIR"
+	NOVEDIR=`pwd`
+	cd "$dir_actual"
+
+	Crear_directorios "$ACEPDIR"
+	Crear_directorios "$ACEPDIR/proc"
+	cd "$ACEPDIR"
+	ACEPDIR=`pwd`
+	cd "$dir_actual"
+
+	Crear_directorios "$INFODIR"
+	Crear_directorios "$INFODIR/pres"
+	cd "$ACEPDIR"
+	ACEPDIR=`pwd`
+	cd "$dir_actual"
+	
+	Crear_directorios "$RECHDIR"
+	cd "$RECHDIR"
+	RECHDIR=`pwd`
+	cd "$dir_actual"
+	
+	Crear_directorios "$LOGDIR"
+	cd "$LOGDIR"
+	LOGDIR=`pwd`
+	cd "$dir_actual"
 }
 
 #$1=subdirectorio $2=expresion que matchea, $3 dir destino
@@ -226,7 +268,7 @@ function Copiar_archivos {
 		echo "archivo $Archivo"
 		local Nombre_archivo=`echo $Archivo | sed -n 's/.*[/]\([^/]*\)/\1/p'`
 		if [[ ! -f "$3"/$Nombre_archivo ]]; then
-			cp -a "$Archivo" "$3"
+			cp -a "$Archivo" "$3/$Nombre_archivo"
 		fi
 	done
 	cd "$directorioActual"
@@ -235,24 +277,28 @@ function Copiar_archivos {
 #instalo archivos
 function Instalacion_archivos {
 	echo "Instalando Archivos Maestros y tablas"
-	Copiar_archivos "$GRUPO01/datos" "*.mae" "$GRUPO01"/"$MAEDIR"
-	Copiar_archivos "$GRUPO01/datos" "*.tab" "$GRUPO01"/"$MAEDIR"
+	Copiar_archivos "$GRUPO01/datos" "*.mae" "$MAEDIR"
+	Copiar_archivos "$GRUPO01/datos" "*.tab" "$MAEDIR"
 	echo
 	echo "Instalando Programas y Funciones"
-	Copiar_archivos "$GRUPO01/datos" "*.sh" "$GRUPO01"/"$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "*.pl" "$GRUPO01"/"$BINDIR"	
-	#Copiar_archivos "$GRUPO01/datos" "Start*." "$GRUPO01"/"$BINDIR"
-	#Copiar_archivos "$GRUPO01/datos" "Stop*." "$GRUPO01"/"$BINDIR"
-	#Copiar_archivos "$GRUPO01/datos" "Mover*." "$GRUPO01"/"$BINDIR"
-	#Copiar_archivos "$GRUPO01/datos" "Rating*." "$GRUPO01"/"$BINDIR"
-	#copio logging
-	#Copiar_archivos "$GRUPO01/datos" "Logging*. " "$GRUPO01"
+#	Copiar_archivos "$GRUPO01/datos" "*.sh" "$GRUPO01"/"$BINDIR"
+#	Copiar_archivos "$GRUPO01/datos" "*.pl" "$GRUPO01"/"$BINDIR"	
+
+	Copiar_archivos "$GRUPO01/datos" "Start" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos" "Stop" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos" "Mover" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos" "Rating" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos" "Reporting" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos" "Logging" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos" "Listener" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos" "Masterlist" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos" "Initializer" "$BINDIR"
 }
 #Actualizo archivos de configuracion
 function Actualizacion_archivos_configuracion {
-	if [ -f "$GRUPO01/$CONFDIR/Installer.conf" ] 
+	if [ -f "$CONFDIR/Installer.conf" ] 
 	then
-		rm $GRUPO01/$CONFDIR/Installer.conf
+		rm $CONFDIR/Installer.conf
 	fi
 	date=`date`
 
@@ -311,7 +357,7 @@ function Verificar_archivos_faltantes {
 	Tomar_Variable MAEDIR
 
 	#verifico cada archivo de tipo .mae y .tab que se encuentran en MAEDIR
-	if [ ! -f "$GRUPO01/$MAEDIR/asociados.mae" ] 
+	if [ ! -f "$MAEDIR/asociados.mae" ] 
 	then
 		Faltantes="$Faltantes 
 		asociados.mae"
@@ -320,7 +366,7 @@ function Verificar_archivos_faltantes {
 			ERROR=1
 		fi
 	fi
-	if [ ! -f "$GRUPO01/$MAEDIR/super.mae" ] 
+	if [ ! -f "$MAEDIR/super.mae" ] 
 	then
 		Faltantes="$Faltantes 
 		super.mae"
@@ -329,7 +375,7 @@ function Verificar_archivos_faltantes {
 			ERROR=1
 		fi
 	fi
-	if [ ! -f "$GRUPO01/$MAEDIR/um.tab" ] 
+	if [ ! -f "$MAEDIR/um.tab" ] 
 	then
 		Faltantes="$Faltantes 
 		um.tab"
@@ -340,7 +386,7 @@ function Verificar_archivos_faltantes {
 	fi
 	
 	#verifico archivos en BINDIR
-	if [ ! -f "$GRUPO01/$BINDIR/Initializer" ] 
+	if [ ! -f "$BINDIR/Initializer" ] 
 	then
 		Faltantes="$Faltantes 
 		Initializer"
@@ -349,7 +395,7 @@ function Verificar_archivos_faltantes {
 			ERROR=1
 		fi
 	fi
-	if [ ! -f "$GRUPO01/$BINDIR/Listener" ] 
+	if [ ! -f "$BINDIR/Listener" ] 
 	then
 		Faltantes="$Faltantes 
 		Listener"
@@ -358,7 +404,7 @@ function Verificar_archivos_faltantes {
 			ERROR=1
 		fi
 	fi
-	if [ ! -f "$GRUPO01/$BINDIR/Masterlist" ] 
+	if [ ! -f "$BINDIR/Masterlist" ] 
 	then
 		Faltantes="$Faltantes 
 		Masterlist"
@@ -367,7 +413,7 @@ function Verificar_archivos_faltantes {
 			ERROR=1
 		fi
 	fi
-	if [ ! -f "$GRUPO01/$BINDIR/Logging" ] 
+	if [ ! -f "$BINDIR/Logging" ] 
 	then
 		Faltantes="$Faltantes 
 		Logging"
@@ -376,7 +422,7 @@ function Verificar_archivos_faltantes {
 			ERROR=1
 		fi
 	fi
-	if [ ! -f "$GRUPO01/$BINDIR/Mover" ] 
+	if [ ! -f "$BINDIR/Mover" ] 
 	then
 		Faltantes="$Faltantes 
 		Mover"
@@ -385,7 +431,7 @@ function Verificar_archivos_faltantes {
 			ERROR=1
 		fi
 	fi
-	if [ ! -f "$GRUPO01/$BINDIR/Rating" ] 
+	if [ ! -f "$BINDIR/Rating" ] 
 	then
 		Faltantes="$Faltantes 
 		Rating"
@@ -394,7 +440,7 @@ function Verificar_archivos_faltantes {
 			ERROR=1
 		fi
 	fi
-	if [ ! -f "$GRUPO01/$BINDIR/Start" ] 
+	if [ ! -f "$BINDIR/Start" ] 
 	then
 		Faltantes="$Faltantes 
 		Start"
@@ -403,7 +449,7 @@ function Verificar_archivos_faltantes {
 			ERROR=1
 		fi
 	fi
-	if [ ! -f "$GRUPO01/$BINDIR/Stop" ] 
+	if [ ! -f "$BINDIR/Stop" ] 
 	then
 		Faltantes="$Faltantes 
 		Stop"
@@ -412,7 +458,7 @@ function Verificar_archivos_faltantes {
 			ERROR=1
 		fi
 	fi
-	if [ ! -f "$GRUPO01/$BINDIR/Reporting" ] 
+	if [ ! -f "$BINDIR/Reporting" ] 
 	then
 		Faltantes="$Faltantes 
 		Reporting"
@@ -429,7 +475,7 @@ function Verificar_archivos_faltantes {
 	./datos/Logging Installer "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01" INFO
 	echo "Direct. de Configuracion: /$BINDIR/ Archivos:"
 	./datos/Logging Installer "Direct. de Configuracion: /$BINDIR/ Archivos:" INFO
-	if [ -d "$GRUPO01/$BINDIR" ] 
+	if [ -d "$BINDIR" ] 
 	then
 		ls "$BINDIR"
 		Archivosbin=`ls "$BINDIR" `
@@ -442,7 +488,7 @@ function Verificar_archivos_faltantes {
 	echo
 	echo "Direct Maestros y Tablas: /$MAEDIR/ Archivos:"
 	./datos/Logging Installer "Direct Maestros y Tablas: /$MAEDIR/ Archivos:" INFO
-	if [ -d "$GRUPO01/$MAEDIR" ]
+	if [ -d "$MAEDIR" ]
 	then
 		ls "$MAEDIR"
 		Archivosmae=`ls "$MAEDIR" `
@@ -455,7 +501,7 @@ function Verificar_archivos_faltantes {
 	echo
 	echo "Direct. de Configuracion: /$CONFDIR/ Archivos:"
 	./datos/Logging Installer "Direct. de Configuracion: /$CONFDIR/ Archivos:" INFO
-	if [ -d "$GRUPO01/$CONFDIR" ] 
+	if [ -d "$CONFDIR" ] 
 	then
 		ls "$CONFDIR"
 		Archivosconf=`ls "$CONFDIR" `
@@ -465,7 +511,7 @@ function Verificar_archivos_faltantes {
 		./datos/Logging Installer "Directorio $CONFDIR inexistente" ERR
 		conf_roto=1
 	fi
-	if [ ! -d "$GRUPO01/$NOVEDIR" ] 
+	if [ ! -d "$NOVEDIR" ] 
 	then
 		echo "Directorio $NOVEDIR inexistente"
 		./datos/Logging Installer "Directorio $NOVEDIR inexistente" ERR
@@ -474,7 +520,7 @@ function Verificar_archivos_faltantes {
 		echo "Directorio de Novedades: $NOVEDIR"
 		./datos/Logging Installer "Directorio de Novedades: $NOVEDIR" INFO
 	fi
-	if [ ! -d "$GRUPO01/$ACEPDIR" ] 
+	if [ ! -d "$ACEPDIR" ] 
 	then
 		echo "Directorio $ACEPDIR inexistente"
 		./datos/Logging Installer "Directorio $ACEPDIR inexistente" ERR
@@ -483,7 +529,7 @@ function Verificar_archivos_faltantes {
 		echo "Novedades Aceptadas: $ACEPDIR"
 		./datos/Logging Installer "Novedades Aceptadas: $ACEPDIR" INFO
 	fi
-	if [ ! -d "$GRUPO01/$RECHDIR" ] 
+	if [ ! -d "$RECHDIR" ] 
 	then
 		echo "Directorio $RECHDIR inexistente"
 		./datos/Logging Installer "Directorio $RECHDIR inexistente" ERR
@@ -492,7 +538,7 @@ function Verificar_archivos_faltantes {
 		echo "Novedades Rechazadas: $RECHDIR"
 		./datos/Logging Installer "Novedades Rechazadas: $RECHDIR" INFO
 	fi
-	if [ ! -d "$GRUPO01/$INFODIR" ] 
+	if [ ! -d "$INFODIR" ] 
 	then
 		echo "Directorio $INFODIR inexistente"
 		./datos/Logging Installer "Directorio $INFODIR inexistente" ERR
@@ -501,7 +547,7 @@ function Verificar_archivos_faltantes {
 		echo "Dir informes de salida: $INFODIR"
 		./datos/Logging Installer "Dir informes de salida: $INFODIR" INFO
 	fi
-	if [ ! -d "$GRUPO01/$LOGDIR" ] 
+	if [ ! -d "$LOGDIR" ] 
 	then
 		echo "Directorio $LOGDIR inexistente"
 		./datos/Logging Installer "Directorio $LOGDIR inexistente" ERR
@@ -552,24 +598,24 @@ Proceso de instalacion cancelado."
 clear
 echo "Inicio de Ejecucion de Installer"
 #verificacion de existencia de directorio
-if [ ! -d "$GRUPO01/$CONFDIR" ] 
+if [ ! -d "$CONFDIR" ] 
 then 
-	mkdir "$GRUPO01/$CONFDIR" 
+	mkdir "$CONFDIR" 
 fi
 yaSeInstalo=1
-if [ ! -f "$GRUPO01/$CONFDIR/Installer.conf" ]
+if [ ! -f "$CONFDIR/Installer.conf" ]
 then
 	yaSeInstalo=0
 fi	
-if [ ! -f "$GRUPO01/$CONFDIR/Installer.log" ]
+if [ ! -f "$CONFDIR/Installer.log" ]
 then
 	#creo archivo de log
 	touch "$CONFDIR/Installer.log"
 fi	
 echo "Log de la instalacion: $GRUPO01/$CONFDIR/Installer.log"
-./datos/Logging Installer "Log de la instalacion: $GRUPO01/$CONFDIR/Installer.log" INFO
-echo "Directorio predefinido de Configuracion: $GRUPO01/$CONFDIR"
-./datos/Logging Installer "Directorio predefinido de Configuracion: $GRUPO01/$CONFDIR" INFO
+./datos/Logging Installer "Log de la instalacion: $CONFDIR/Installer.log" INFO
+echo "Directorio predefinido de Configuracion: $CONFDIR"
+./datos/Logging Installer "Directorio predefinido de Configuracion: $CONFDIR" INFO
 
 if [ $yaSeInstalo -eq 1 ]
 then	
@@ -585,14 +631,14 @@ else
 	else
 		Verificar_perl
 		instalar=0
-		BINDIR="bin"
-		MAEDIR="mae"
-		NOVEDIR="arribos"
+		BINDIR="$GRUPO01/bin"
+		MAEDIR="$GRUPO01/mae"
+		NOVEDIR="$GRUPO01/arribos"
 		DATASIZE=100
-		ACEPDIR="aceptadas"
-		INFODIR="informes"
-		RECHDIR="rechazados"
-		LOGDIR="log"
+		ACEPDIR="$GRUPO01/aceptadas"
+		INFODIR="$GRUPO01/informes"
+		RECHDIR="$GRUPO01/rechazados"
+		LOGDIR="$GRUPO01/log"
 		LOGEXT=".log"
 		LOGSIZE=400
 
@@ -600,16 +646,16 @@ else
 		do
 			echo
 			# solicito valor de BINDIR
-			echo "Defina el directorio de instalacion de los ejecutables ($GRUPO01/$BINDIR):"
-			Obtener_path BINDIR "Directorio de instalacion de los ejecutables ($GRUPO01/$BINDIR):" "$BINDIR"
+			echo "Defina el directorio de instalacion de los ejecutables ($BINDIR):"
+			Obtener_path BINDIR "Directorio de instalacion de los ejecutables ($BINDIR):" "$BINDIR"
 			echo
 			# solicito valor de MAEDIR
-			echo "Defina directorio para maestros y tablas ($GRUPO01/$MAEDIR):"
-			Obtener_path MAEDIR "Directorio para maestros y tablas ($GRUPO01/$MAEDIR):" "$MAEDIR"
+			echo "Defina directorio para maestros y tablas ($MAEDIR):"
+			Obtener_path MAEDIR "Directorio para maestros y tablas ($MAEDIR):" "$MAEDIR"
 			echo 
 			# solicito valor de NOVEDIR
-			echo "Defina el Directorio de arribo de novedades ($GRUPO01/$NOVEDIR):"
-			Obtener_path NOVEDIR "Directorio de arribo de novedades ($GRUPO01/$NOVEDIR):" "$NOVEDIR"
+			echo "Defina el Directorio de arribo de novedades ($NOVEDIR):"
+			Obtener_path NOVEDIR "Directorio de arribo de novedades ($NOVEDIR):" "$NOVEDIR"
 			echo
 			# solicito valor de DATASIZE
 			echo "Defina espacio minimo libre para el arribo de novedades en Mbytes ($DATASIZE):"
@@ -641,20 +687,20 @@ Cancele la instalacion o intentelo nuevamente." ERR
 			done
 			echo 		
 			# solicito valor de ACEPDIR
-			echo "Defina el directorio de grabacion de las Novedades aceptadas ($GRUPO01/$ACEPDIR):"
-			Obtener_path ACEPDIR "Directorio de grabacion de las Novedades aceptadas ($GRUPO01/$ACEPDIR):" "$ACEPDIR"		
+			echo "Defina el directorio de grabacion de las Novedades aceptadas ($ACEPDIR):"
+			Obtener_path ACEPDIR "Directorio de grabacion de las Novedades aceptadas ($ACEPDIR):" "$ACEPDIR"		
 			echo
 			# solicito valor de INFODIR
-			echo "Defina el directorio de grabación de los informes de salida ($GRUPO01/$INFODIR):"
-			Obtener_path INFODIR "Directorio de grabación de los informes de salida ($GRUPO01/$INFODIR):" "$INFODIR"
+			echo "Defina el directorio de grabación de los informes de salida ($INFODIR):"
+			Obtener_path INFODIR "Directorio de grabación de los informes de salida ($INFODIR):" "$INFODIR"
 			echo
 			# solicito valor de RECHDIR
-			echo "Defina el directorio de grabacion de Archivos rechazados ($GRUPO01/$RECHDIR):"
-			Obtener_path RECHDIR "Directorio de grabación de Archivos rechazados ($GRUPO01/$RECHDIR):" "$RECHDIR"
+			echo "Defina el directorio de grabacion de Archivos rechazados ($RECHDIR):"
+			Obtener_path RECHDIR "Directorio de grabación de Archivos rechazados ($RECHDIR):" "$RECHDIR"
 			echo			
 			# solicito valor de LOGDIR
-			echo "Defina el directorio de logs ($GRUPO01/$LOGDIR):"
-			Obtener_path LOGDIR "Directorio de logs ($GRUPO01/$LOGDIR):" "$LOGDIR"
+			echo "Defina el directorio de logs ($LOGDIR):"
+			Obtener_path LOGDIR "Directorio de logs ($LOGDIR):" "$LOGDIR"
 			echo
 			# solicito valor de LOGEXT (EXTENSION)
 			echo "Ingrese la extension para los archivos de log ($LOGEXT):"
@@ -666,7 +712,7 @@ Cancele la instalacion o intentelo nuevamente." ERR
 			clear
 			# estructura de directorios resultante y valores de los parámetros configurados
 			echo "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01"
-			Path_y_Archivos "Direct. de Configuracion: " "$GRUPO01/$CONFDIR" 1
+			Path_y_Archivos "Direct. de Configuracion: " "$CONFDIR" 1
 			Path_y_Archivos "Directorio Ejecutables: " "$BINDIR" 1
 			Path_y_Archivos "Directorio Maestros y Tablas:" "$MAEDIR" 1
 			Path_y_Archivos "Directorio de Novedades:" "$NOVEDIR" 0
@@ -674,7 +720,7 @@ Cancele la instalacion o intentelo nuevamente." ERR
 			Path_y_Archivos "Directiorio Novedades Aceptadas:" "$ACEPDIR" 0
 			Path_y_Archivos "Directorio Informes de Salida:" "$INFODIR" 0
 			Path_y_Archivos "Directorio Archivos Rechazados:" "$RECHDIR" 0
-			echo "Directorio de Logs de Comandos: $LOGDIR /<comando> $LOGEXT"
+			echo "Directorio de Logs de Comandos: $LOGDIR /<comando>.$LOGEXT"
 			echo "Tamano maximo para los archivos de log del sistema:" "$LOGSIZE" "Kb"
 			echo "Estado de la instalacion: LISTA"
 			Pregunta_SiNo "Iniciando Instalación. Esta Ud. seguro? (Si-No)"
@@ -695,7 +741,7 @@ Cancele la instalacion o intentelo nuevamente." ERR
 		echo "INSTALACION CONCLUIDA"
 		./datos/Logging Installer "Intalacion CONCLUIDA" INFO 
 	fi
-	chmod 777 "$BINDIR"/Initializer.sh
+	chmod 777 "$BINDIR"/Initializer
 fi
 
 
