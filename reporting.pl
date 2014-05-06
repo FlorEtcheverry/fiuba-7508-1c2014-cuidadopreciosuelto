@@ -150,7 +150,7 @@ sub CargarArrayLP
 		
 		if (length($_[1]) > 0)
 		{
-			if ($arrayListas[$i] =~ /$_[1].[0_9]*/)
+			if ($arrayListas[$i] =~ /$_[1].[^-]*/)
 			{
 				push(@array, $arrayListas[$i]);
 			}
@@ -230,7 +230,7 @@ sub MostrarMenuR_Referencia
 		{
 			chomp($linea);
 
-			if ($linea =~ /[^;]*;[^;]*;1;.*/)
+			if (($linea =~ /^[^;]*;[^;]*;\d;.*/) or ($linea =~ /^[^;]*;[^;]*;\d{2};.*/))
 			{
 				my @arrayData = split(";", $linea);
 
@@ -249,8 +249,10 @@ sub MostrarMenuR_Referencia
 		{
 			print SALIDA "$infoSalida\n";
 		}
-	
-		print "\n";
+		else
+		{
+			print "\n";
+		}
 
 		close (LISTA);
 	}
@@ -330,7 +332,7 @@ sub MostrarMenuM_MenorPrecio
 			
 			@arrayData = split(";", $linea);
 
-			if ($linea =~ /[^;]*;[^;]*;1;.*/)
+			if (($linea =~ /[^;]*;[^;]*;\d;.*/) or ($linea =~ /[^;];[^;];\d{2};.*/))
 			{
 				if ($idMenor > 0)
 				{
@@ -381,8 +383,10 @@ sub MostrarMenuM_MenorPrecio
 		{
 			print SALIDA "$infoSalida\n";
 		}
-	
-		print "\n";
+		else
+		{
+			print "\n";
+		}
 	}
 
 	if ($_[4] eq "y")
@@ -470,8 +474,10 @@ sub MostrarMenuF_Faltante
 		{
 			print SALIDA "$infoSalida\n";
 		}
-
-		print "\n";
+		else
+		{		
+			print "\n";
+		}
 	}
 
 	if ($_[4] eq "y")
