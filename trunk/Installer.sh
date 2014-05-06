@@ -235,17 +235,18 @@ function Copiar_archivos {
 #instalo archivos
 function Instalacion_archivos {
 	echo "Instalando Archivos Maestros y tablas"
-	Copiar_archivos "$GRUPO01/datos" "*.mae" "$GRUPO"/"$MAEDIR"
-	Copiar_archivos "$GRUPO01/datos" "*.tab" "$GRUPO"/"$MAEDIR"
+	Copiar_archivos "$GRUPO01/datos" "*.mae" "$GRUPO01"/"$MAEDIR"
+	Copiar_archivos "$GRUPO01/datos" "*.tab" "$GRUPO01"/"$MAEDIR"
 	echo
 	echo "Instalando Programas y Funciones"
 	Copiar_archivos "$GRUPO01/datos" "*.sh" "$GRUPO01"/"$BINDIR"
 	Copiar_archivos "$GRUPO01/datos" "*.pl" "$GRUPO01"/"$BINDIR"	
-	Copiar_archivos "$GRUPO01/datos" "Logging*. " "$GRUPO01"/"$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "Start*." "$GRUPO01"/"$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "Stop*." "$GRUPO01"/"$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "Mover*." "$GRUPO01"/"$BINDIR"
-	Copiar_archivos "$GRUPO01/datos" "Rating*." "$GRUPO01"/"$BINDIR"
+	#Copiar_archivos "$GRUPO01/datos" "Start*." "$GRUPO01"/"$BINDIR"
+	#Copiar_archivos "$GRUPO01/datos" "Stop*." "$GRUPO01"/"$BINDIR"
+	#Copiar_archivos "$GRUPO01/datos" "Mover*." "$GRUPO01"/"$BINDIR"
+	#Copiar_archivos "$GRUPO01/datos" "Rating*." "$GRUPO01"/"$BINDIR"
+	#copio logging
+	#Copiar_archivos "$GRUPO01/datos" "Logging*. " "$GRUPO01"
 }
 #Actualizo archivos de configuracion
 function Actualizacion_archivos_configuracion {
@@ -254,7 +255,8 @@ function Actualizacion_archivos_configuracion {
 		rm $GRUPO01/$CONFDIR/Installer.conf
 	fi
 	date=`date`
-	./Logging Installer "GRUPO01=$GRUPO01=$USER=$date
+
+echo "GRUPO01=$GRUPO01=$USER=$date
 CONFDIR=$CONFDIR=$USER=$date
 BINDIR=$BINDIR=$USER=$date 
 MAEDIR=$MAEDIR=$USER=$date
@@ -265,7 +267,7 @@ INFODIR=$INFODIR=$USER=$date
 RECHDIR=$RECHDIR=$USER=$date
 LOGDIR=$LOGDIR=$USER=$date
 LOGEXT=$LOGEXT=$USER=$date
-LOGSIZE=$LOGSIZE=$USER=$date" INFO
+LOGSIZE=$LOGSIZE=$USER=$date" >> "$GRUPO01/$CONFDIR/Installer.conf"
 
 }
 
@@ -293,16 +295,27 @@ function Tomar_Variable {
 
 
 function Verificar_archivos_faltantes {
-echo "entro"
 	ERROR=0
 	conf_roto=0
-	echo ERROR , conf_roto
+	
+	#verifico cada archivo que esta en BINDIR
+	Tomar_Variable BINDIR
+	Tomar_Variable NOVEDIR
+	Tomar_Variable DATASIZE
+	Tomar_Variable ACEPDIR
+	Tomar_Variable RECHDIR
+	Tomar_Variable INFODIR
+	Tomar_Variable LOGDIR
+	Tomar_Variable LOGEXT
+	Tomar_Variable LOGSIZE
+	Tomar_Variable MAEDIR
+
 	#verifico cada archivo de tipo .mae y .tab que se encuentran en MAEDIR
 	if [ ! -f "$GRUPO01/$MAEDIR/asociados.mae" ] 
 	then
 		Faltantes="$Faltantes 
 		asociados.mae"
-		if [ ! -f  "$GRUPO01/Datos/asociados.mae" ]
+		if [ ! -f  "$GRUPO01/datos/asociados.mae" ]
 		 then
 			ERROR=1
 		fi
@@ -311,7 +324,7 @@ echo "entro"
 	then
 		Faltantes="$Faltantes 
 		super.mae"
-		if [ ! -f  "$GRUPO01/Datos/super.mae" ]
+		if [ ! -f  "$GRUPO01/datos/super.mae" ]
 		 then
 			ERROR=1
 		fi
@@ -320,19 +333,18 @@ echo "entro"
 	then
 		Faltantes="$Faltantes 
 		um.tab"
-		if [ ! -f  "$GRUPO01/Datos/um.tab" ]
+		if [ ! -f  "$GRUPO01/datos/um.tab" ]
 		 then
 			ERROR=1
 		fi
 	fi
-
-#verifico cada archivo que esta en BINDIR
-	Tomar_Variable BINDIR
+	
+	#verifico archivos en BINDIR
 	if [ ! -f "$GRUPO01/$BINDIR/Initializer.sh" ] 
 	then
 		Faltantes="$Faltantes 
 		Initializer.sh"
-		if [ ! -f  "$GRUPO01/Datos/Initializer.sh" ]
+		if [ ! -f  "$GRUPO01/datos/Initializer.sh" ]
 		 then
 			ERROR=1
 		fi
@@ -341,7 +353,7 @@ echo "entro"
 	then
 		Faltantes="$Faltantes 
 		Listener.sh"
-		if [ ! -f  "$GRUPO01/Datos/Listener.sh" ]
+		if [ ! -f  "$GRUPO01/datos/Listener.sh" ]
 		 then
 			ERROR=1
 		fi
@@ -350,7 +362,7 @@ echo "entro"
 	then
 		Faltantes="$Faltantes 
 		Masterlist.sh"
-		if [ ! -f  "$GRUPO01/Datos/Masterlist.sh" ]
+		if [ ! -f  "$GRUPO01/datos/Masterlist.sh" ]
 		 then
 			ERROR=1
 		fi
@@ -359,7 +371,7 @@ echo "entro"
 	then
 		Faltantes="$Faltantes 
 		Logging.pl"
-		if [ ! -f  "$GRUPO01/Datos/Logging.pl" ]
+		if [ ! -f  "$GRUPO01/datos/Logging.pl" ]
 		 then
 			ERROR=1
 		fi
@@ -368,7 +380,7 @@ echo "entro"
 	then
 		Faltantes="$Faltantes 
 		Mover.sh"
-		if [ ! -f  "$GRUPO01/Datos/Mover.sh" ]
+		if [ ! -f  "$GRUPO01/datos/Mover.sh" ]
 		 then
 			ERROR=1
 		fi
@@ -377,7 +389,7 @@ echo "entro"
 	then
 		Faltantes="$Faltantes 
 		Rating.sh"
-		if [ ! -f  "$GRUPO01/Datos/Rating.sh" ]
+		if [ ! -f  "$GRUPO01/datos/Rating.sh" ]
 		 then
 			ERROR=1
 		fi
@@ -386,7 +398,7 @@ echo "entro"
 	then
 		Faltantes="$Faltantes 
 		Start.sh"
-		if [ ! -f  "$GRUPO01/Datos/Start.sh" ]
+		if [ ! -f  "$GRUPO01/datos/Start.sh" ]
 		 then
 			ERROR=1
 		fi
@@ -395,7 +407,7 @@ echo "entro"
 	then
 		Faltantes="$Faltantes 
 		Stop.sh"
-		if [ ! -f  "$GRUPO01/Datos/Stop.sh" ]
+		if [ ! -f  "$GRUPO01/datos/Stop.sh" ]
 		 then
 			ERROR=1
 		fi
@@ -404,7 +416,7 @@ echo "entro"
 	then
 		Faltantes="$Faltantes 
 		inicio_var_entorno.sh"
-		if [ ! -f  "$GRUPO01/Datos/inicio_var_entorno.sh" ]
+		if [ ! -f  "$GRUPO01/datos/inicio_var_entorno.sh" ]
 		 then
 			ERROR=1
 		fi
@@ -413,7 +425,7 @@ echo "entro"
 	then
 		Faltantes="$Faltantes 
 		prueba.sh"
-		if [ ! -f  "$GRUPO01/Datos/prueba.sh" ]
+		if [ ! -f  "$GRUPO01/datos/prueba.sh" ]
 		 then
 			ERROR=1
 		fi
@@ -422,21 +434,12 @@ echo "entro"
 	then
 		Faltantes="$Faltantes 
 		reporting.pl"
-		if [ ! -f  "$GRUPO01/Datos/reporting.pl" ]
+		if [ ! -f  "$GRUPO01/datos/reporting.pl" ]
 		 then
 			ERROR=1
 		fi
 	fi
 
-	#guardo el resto de los valores ya configurados
-	conseguirVariable NOVEDIR
-	conseguirVariable DATASIZE
-	conseguirVariable ACEPDIR
-	conseguirVariable RECHDIR
-	conseguirVariable INFODIR
-	conseguirVariable LOGDIR
-	conseguirVariable LOGEXT
-	conseguirVariable LOGSIZE
 
 	#LISTO DIRECTORIOS.
 	echo
@@ -514,7 +517,7 @@ echo "entro"
 		conf_roto=1
 	else
 		echo "Dir informes de salida: $INFODIR"
-		./LOgging Installer "Dir informes de salida: $INFODIR" INFO
+		./Logging Installer "Dir informes de salida: $INFODIR" INFO
 	fi
 	if [ ! -d "$GRUPO01/$LOGDIR" ] 
 	then
@@ -532,7 +535,7 @@ echo "entro"
 
 	#imprimo faltantes
 	#echo "Faltan: $Faltantes"
-	if [ "$Faltantes" == "" && $conf_roto -eq 0 ] 
+	if [ "$Faltantes" == "" -a $conf_roto -eq 0 ] 
 	then
 		echo "Estado de la instalacion: COMPLETA
 Proceso de instalacion cancelado." 
@@ -571,10 +574,13 @@ if [ ! -d "$GRUPO01/$CONFDIR" ]
 then 
 	mkdir "$GRUPO01/$CONFDIR" 
 fi
-existeLog=1
+yaSeInstalo=1
+if [ ! -f "$GRUPO01/$CONFDIR/Installer.conf" ]
+then
+	yaSeInstalo=0
+fi	
 if [ ! -f "$GRUPO01/$CONFDIR/Installer.log" ]
 then
-	existeLog=0
 	#creo archivo de log
 	touch "$CONFDIR/Installer.log"
 fi	
@@ -583,14 +589,12 @@ echo "Log de la instalacion: $GRUPO01/$CONFDIR/Installer.log"
 echo "Directorio predefinido de Configuracion: $GRUPO01/$CONFDIR"
 ./Logging Installer "Directorio predefinido de Configuracion: $GRUPO01/$CONFDIR" INFO
 
-if [ $existeLog -eq 1 ]
+if [ $yaSeInstalo -eq 1 ]
 then	
-	if [ -f "$GRUPO01/$CONFDIR/Installer.conf" ]
-	then
-		echo "El paquete fue instalado anteriormente"
-		Verificar_archivos_faltantes
-	fi
+	Verificar_archivos_faltantes
+
 else
+
 	echo 'TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01 Al instalar TP SO7508 Primer Cuatrimestre 2014 UD. expresa aceptar los terminos y condiciones del "ACUERDO DE LICENCIA DE SOFTWARE" incluido en este paquete.'
 	Pregunta_SiNo "Acepta? Si – No'"
 	if [ $? -eq 0 ]
@@ -655,24 +659,24 @@ else
 			done
 			echo 		
 			# solicito valor de ACEPDIR
-			echo "Defina el directorio de grabacion de las Novedades aceptadas ($GRUPO01/aceptadas):"
-			Obtener_path ACEPDIR "Directorio de grabacion de las Novedades aceptadas ($GRUPO01/aceptadas):" "aceptadas"		
+			echo "Defina el directorio de grabacion de las Novedades aceptadas ($GRUPO01/$ACEPDIR):"
+			Obtener_path ACEPDIR "Directorio de grabacion de las Novedades aceptadas ($GRUPO01/$ACEPDIR):" "$ACEPDIR"		
 			echo
 			# solicito valor de INFODIR
-			echo "Defina el directorio de grabación de los informes de salida ($GRUPO01/informes):"
-			Obtener_path INFODIR "Directorio de grabación de los informes de salida ($GRUPO01/informes):" "informes"
+			echo "Defina el directorio de grabación de los informes de salida ($GRUPO01/$INFODIR):"
+			Obtener_path INFODIR "Directorio de grabación de los informes de salida ($GRUPO01/$INFODIR):" "$INFODIR"
 			echo
 			# solicito valor de RECHDIR
-			echo "Defina el directorio de grabacion de Archivos rechazados ($GRUPO01/rechazados):"
-			Obtener_path RECHDIR "Directorio de grabación de Archivos rechazados ($GRUPO01/rechazados):" "rechazados"
+			echo "Defina el directorio de grabacion de Archivos rechazados ($GRUPO01/$RECHDIR):"
+			Obtener_path RECHDIR "Directorio de grabación de Archivos rechazados ($GRUPO01/$RECHDIR):" "$RECHDIR"
 			echo			
 			# solicito valor de LOGDIR
-			echo "Defina el directorio de logs ($GRUPO01/log):"
-			Obtener_path LOGDIR "Directorio de logs ($GRUPO01/log):" "log"
+			echo "Defina el directorio de logs ($GRUPO01/$LOGDIR):"
+			Obtener_path LOGDIR "Directorio de logs ($GRUPO01/$LOGDIR):" "$LOGDIR"
 			echo
 			# solicito valor de LOGEXT (EXTENSION)
-			echo "Ingrese la extension para los archivos de log (.log):"
-			Obtener_valor LOGEXT "La extension para los archivos de log es:" ".log" 
+			echo "Ingrese la extension para los archivos de log ($LOGEXT):"
+			Obtener_valor LOGEXT "La extension para los archivos de log es:" "$LOGEXT" 
 			echo 
 			#verifico valor maximo para los archivos de log LOGSIZE
 			echo "Defina el tamaño maximo para los archivos $LOGEXT en Kbytes ($LOGSIZE):"		
@@ -702,6 +706,9 @@ else
 		done
 		Creacion_de_directorios
 		Instalacion_archivos
+		#creo archivo de conf
+		touch "$CONFDIR/Installer.conf"
+
 		Actualizacion_archivos_configuracion
 		echo "INSTALACION CONCLUIDA"
 		./Logging Installer "Intalacion CONCLUIDA" INFO 
