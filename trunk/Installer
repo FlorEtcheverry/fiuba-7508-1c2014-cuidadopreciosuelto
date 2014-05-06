@@ -89,7 +89,6 @@ function Obtener_path {
 	if [ "$Resultadoparcial" == "" ]
 	then
 		echo "Error: El valor ingresado para $1 es inválido, se tomará el predeterminado: $3"
-		#echo "Error: El valor ingresado para $1 es inválido, se tomará el predeterminado: $3" >> "$GRUPO01/$CONFDIR/Installer.log"
 		Resultadoparcial=$3	
 	fi
 	
@@ -192,7 +191,7 @@ function Crear_directorios {
 			then
 				mkdir "$path/$primerSubpath"
 			fi
-			echo 
+			#echo 
 			path="$path/$primerSubpath"
 			primerSubpath=`echo $segundoSubpath | sed "s-^\([^/]*\)/.*-\1-"`
 			segundoSubpath=`echo $segundoSubpath | sed -n "s-^[^/]*/\(.*\)-\1-p"`
@@ -476,7 +475,7 @@ function Verificar_archivos_faltantes {
 	echo
 	echo "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01"
 	./datos/bin/Logging Installer "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01" INFO
-	echo "Direct. de Configuracion: /$BINDIR/ Archivos:"
+	echo "Direct. de Configuracion: $BINDIR/ Archivos:"
 	./datos/bin/Logging Installer "Direct. de Configuracion: /$BINDIR/ Archivos:" INFO
 	if [ -d "$BINDIR" ] 
 	then
@@ -489,7 +488,7 @@ function Verificar_archivos_faltantes {
 		conf_roto=1
 	fi
 	echo
-	echo "Direct Maestros y Tablas: /$MAEDIR/ Archivos:"
+	echo "Direct Maestros y Tablas: $MAEDIR/ Archivos:"
 	./datos/bin/Logging Installer "Direct Maestros y Tablas: /$MAEDIR/ Archivos:" INFO
 	if [ -d "$MAEDIR" ]
 	then
@@ -502,7 +501,7 @@ function Verificar_archivos_faltantes {
 		conf_roto=1
 	fi
 	echo
-	echo "Direct. de Configuracion: /$CONFDIR/ Archivos:"
+	echo "Direct. de Configuracion: $CONFDIR/ Archivos:"
 	./datos/bin/Logging Installer "Direct. de Configuracion: /$CONFDIR/ Archivos:" INFO
 	if [ -d "$CONFDIR" ] 
 	then
@@ -559,13 +558,7 @@ function Verificar_archivos_faltantes {
 		echo "Directorio de Logs de Comandos: $LOGDIR/<comando> $LOGEXT"
 		./datos/bin/Logging Installer "Directorio de Logs de Comandos: $LOGDIR/<comando> $LOGEXT" INFO
 	fi	
-	echo "Estado de la instalación: COMPLETA"
-	./datos/bin/Logging Installer "Estado de la instalacion: COMPLETA" INFO
-	echo "Proceso de Instalacion Cancelado"
-	./datos/bin/Logging Installer "Proceso de Instalacion Cancelado" INFO
 
-	#imprimo faltantes
-	#echo "Faltan: $Faltantes"
 	if [ "$Faltantes" == "" -a $conf_roto -eq 0 ] 
 	then
 		echo "Estado de la instalacion: COMPLETA
@@ -590,9 +583,22 @@ Proceso de instalacion cancelado."
 		else 
 			if [ $ERROR == 1 ] 
 			then
-				echo "No se encuentran los archivos fuentes."
+				echo "No se encuentran los archivos fuentes, instalacion interrumpida."
 				exit 1
+			else
+				tmp=`Copiar_archivos "$GRUPO01/datos" "*.mae" "$MAEDIR" `
+				tmp=`Copiar_archivos "$GRUPO01/datos" "*.tab" "$MAEDIR" `
+				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Start" "$BINDIR" `
+				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Stop" "$BINDIR" `
+				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Mover" "$BINDIR" `
+				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Rating" "$BINDIR" `
+				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Reporting" "$BINDIR"` 
+				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Logging" "$BINDIR" `
+				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Listener" "$BINDIR" `
+				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Masterlist" "$BINDIR" `
+				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Initializer" "$BINDIR" `
 			fi
+			
 		fi
 	fi
 }
