@@ -12,10 +12,9 @@ while ($opcion ne "-exit")
         # print "\n\n";
         print "----------------------------------------------------------------------------------\n";
         print "1ra entrada --> Opcion de proceso ('-a' para mas informacion | '-exit' para salir)\n";
-        print "2da entrada --> Path de la carpeta con Listas Presupuestadas\n";
-        print "3ra entrada --> Filtro de usuario\n";
-        print "4ta entrada --> Filtro de Supermercado\n";
-        print "5ta entrada --> Opcion de grabado ('-w') [y/n]\n";
+        print "2da entrada --> Filtro de usuario\n";
+        print "3ra entrada --> Filtro de Supermercado\n";
+        print "4ta entrada --> Opcion de grabado ('-w') [y/n]\n";
         print "----------------------------------------------------------------------------------\n";
 
         print "1ra entrada: ";
@@ -28,7 +27,7 @@ while ($opcion ne "-exit")
                 $opcion = <STDIN>;
                 next;
         }
-
+#/home/juan/Documents/facultad/fiuba-7508-1c2014-cuidadopreciosuelto/informes/pres
         if ($opcion eq "-a")
         {
                 &MostrarMenuA_Ayuda;
@@ -36,8 +35,8 @@ while ($opcion ne "-exit")
         
         if ($opcion eq "-r" or $opcion eq "-m" or $opcion eq "-d" or $opcion eq "-f" or $opcion eq "-mr" or $opcion eq "-dr")
         {
-print "$ENV{GRUPO01}.$ENV{MAEDIR}.super.mae";
-                open(SUPER, $ENV{GRUPO01}.$ENV{MAEDIR}."super.mae") || die "ERROR: el archivo de super.mae no existe";
+
+                open(SUPER, $ENV{GRUPO01}.$ENV{MAEDIR}."\/super.mae") || die "ERROR: el archivo de super.mae no existe";
                 
                 # -----------------------------------
                 # Cargamos la Lista de Supermercados (el filtro se aplica mas tarde).
@@ -56,22 +55,34 @@ print "$ENV{GRUPO01}.$ENV{MAEDIR}.super.mae";
                 }   
 				
 		
-                print "2da entrada: ";
-                $pathLP = <STDIN>;
-                chomp($pathLP);
+               $pathLP = $ENV{GRUPO01}.$ENV{INFODIR}."\/pres";
+                
 
-                print "3ra entrada:  [y/n]";
-				$fitroUsuario = &mostrarYCargarMenuFiltroUsuario($pathLP);
-				
+                print "2da entrada:  [y/n] \n";
+		$opcionF = <STDIN>;
+                chomp($opcionF);
+		if ( $opcionF eq "y" ) {
+			$fitroUsuario = &mostrarYCargarMenuFiltroUsuario($pathLP);
+		}else
+		{
+			print "No se usara un filtro de usuarios.\n"
+		}	
 #                $filtroUsuario = <STDIN>;
 #                chomp($filtroUsuario);
 
-                print "4ta entrada:  [y/n]";
-				$filtroSuper = &mostrarYCargarMenuFiltroSuper(%hashSuper);
+                print "3ra entrada:  [y/n] \n";
+		$opcionF = <STDIN>;
+                chomp($opcionF);
+		if ( $opcionF eq "y" ) {
+		$filtroSuper = &mostrarYCargarMenuFiltroSuper(\%hashSuper);
+		}else
+		{
+			print "No se usara un filtro de supermercados.\n"
+		}	
 #                $filtroSuper = <STDIN>;
 #                chomp($filtroSuper);
 
-                print "5ta entrada [y/n]: ";
+                print "4ta entrada [y/n]: ";
                 $opcionDeGrabado = <STDIN>;
                 chomp($opcionDeGrabado);
         
@@ -144,7 +155,7 @@ system ("clear");
 # FIN MAIN.
 # ---------
 
-sub mostrarMenuFiltroUsuario
+sub mostrarYCargarMenuFiltroUsuario
 {
 
 	my @ListasPres = ();
@@ -168,16 +179,17 @@ sub mostrarMenuFiltroUsuario
 	print "Seleccione los usuarios deseados de la siguiente lista: \n";
 	
 	for (my $i=0; $i<=$#ListasPres; $i++)
-    {       
-		@datosUsuarios=split(";" , $ListasPres[$i]);
-		print "Usuario posible: $datosUsuarios[0] \n";
-
-    }
+   	{       
+		$posPunto=index($ListasPres[$i],".");
+		print "Usuario posible: ".substr($ListasPres[$i],0,$posPunto) ."\n";
+    	}
 	
 	print "Para elegir los usuarios a considerar ingreselos y presione enter entre cada uno y presione CTRL+D para terminar \n";
 	
 	my @filtroUser=<STDIN>;
 	
+	print "\n\n";
+
 	for (my $i=0; $i<=$#filtroUser; $i++)
     	{       
 		$filtroUsers = $filtroUsers.@filtroUser[$i];
@@ -229,34 +241,29 @@ sub CargarArrayLP
         }
 
         for (my $i=0; $i<=$#arrayListas; $i++)
-        {       
+        {   
                 next if ($arrayListas[$i] eq "." || $arrayListas[$i] eq "..");
                 #hay filtro de usuario
                 if (length($_[1]) > 0)
                 {
-						my @datosListaPresupuesto = split (".",$arrayListas[$i]);
-						my $usuario = $datosListaPresupuesto[0];
+
+			my @datosListaPresupuesto = split (".",$arrayListas[$i]);
+			my $usuario = $datosListaPresupuesto[0];
 						
                         if ($usuario =~ $_[1])
                         {
-                                push(@array, $ENV{GRUPO01}.$ENV{INFODIR}."/pres".$arrayListas[$i]);
+                                push(@array, $ENV{GRUPO01}.$ENV{INFODIR}."/pres/".$arrayListas[$i]);
                         }
                 }
                 else#no se filtra de usuario -> cargo todo
                 {
-                        if ($arrayListas[$i] =~ /[^.]*.[^-]\{3\}/)
+                        if ($arrayListas[$i] =~ /[^.]*\..../)
                         {
-                                push(@array, $ENV{GRUPO01}.$ENV{INFODIR}."/pres".$arrayListas[$i]);
+                                push(@array, $ENV{GRUPO01}.$ENV{INFODIR}."/pres/".$arrayListas[$i]);
                         }
                 }
         }
 
-	####################3#DEBUG
-	for (my $i=0; $i<=$#arrayListas; $i++)
-        {       
-                print "$arrayListas \n";
-        }
-	###################33
         return (@array);
 }
 
@@ -395,7 +402,7 @@ sub MostrarMenuM_MenorPrecioArchivo
                 	@arrayLineaProducto = split(";", $linea);
 			my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 			#si el super-prov de la linea encaja en el filtro lo imprimo
-			if ( $Super_provLinea =~ /$_[1]*/ or length ($_[1]) == 0){
+			if ( $Super_provLinea =~ /$_[1]/ or length ($_[1]) == 0){
 						
 		                #Me fijo si es de precios cuidados y lo salteo.
 		                if ( $arrayLineaProducto[2] < 100 ){
@@ -457,7 +464,7 @@ sub MostrarMenuM_MenorPrecioPantalla
                     @arrayLineaProducto = split(";", $linea);
 					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $Super_provLinea =~ /$_[1]*/ or length ($_[1]) == 0){
+					if ( $Super_provLinea =~ /$_[1]/ or length ($_[1]) == 0){
 
                         #Me fijo si es de precios cuidados y lo salteo.
                         if ( $arrayLineaProducto[2] < 100 ){
@@ -620,7 +627,7 @@ sub MostrarMenuDR_DondeComprarYReferenciaArch
                     @arrayLineaProducto = split(";", $linea);
 					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $Super_provLinea =~ /$_[1]*/ or length ($_[1]) == 0){
+					if ( $Super_provLinea =~ /$_[1]/ or length ($_[1]) == 0){
 
                         #Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
                         #si lo es guardo el menor de los precios cuidados y saltear.
@@ -747,7 +754,7 @@ sub MostrarMenuDR_DondeComprarYReferenciaPantalla
                     @arrayLineaProducto = split(";", $linea);
 					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $Super_provLinea =~ /$_[1]*/ or length ($_[1]) == 0){
+					if ( $Super_provLinea =~ /$_[1]/ or length ($_[1]) == 0){
 
                         #Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
                         #si lo es guardo el menor de los precios cuidados y saltear.
@@ -875,7 +882,7 @@ sub MostrarMenuMRArchivo
                     @arrayLineaProducto = split(";", $linea);
 					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $Super_provLinea =~ /$_[1]*/ or length ($_[1]) == 0){
+					if ( $Super_provLinea =~ /$_[1]/ or length ($_[1]) == 0){
 
                         #Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
                         #si lo es guardo el menor de los precios cuidados y saltear.
@@ -962,7 +969,7 @@ sub MostrarMenuMRPantalla
                     @arrayLineaProducto = split(";", $linea);
 					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $Super_provLinea =~ /$_[1]*/ or length ($_[1]) == 0){
+					if ( $Super_provLinea =~ /$_[1]/ or length ($_[1]) == 0){
 
                         #Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
                         #si lo es guardo el menor de los precios cuidados y saltear.
@@ -1054,7 +1061,7 @@ sub MostrarMenuDArchivo
                     @arrayLineaProducto = split(";", $linea);
 					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $Super_provLinea =~ /$_[1]*/ or length ($_[1]) == 0){
+					if ( $Super_provLinea =~ /$_[1]/ or length ($_[1]) == 0){
 
                         #Me fijo si es de precios cuidados y lo salteo.
                         if ( $arrayLineaProducto[2] < 100 ){
@@ -1162,8 +1169,7 @@ sub MostrarMenuDPantalla
                     @arrayLineaProducto = split(";", $linea);
 					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $Super_provLinea =~ /$_[1]*/ or length ($_[1]) == 0){
-
+					if ( $Super_provLinea =~ /$_[1]/ or length ($_[1]) == 0){
                         #Me fijo si es de precios cuidados y lo salteo.
                         if ( $arrayLineaProducto[2] < 100 ){
                                 next;
@@ -1198,8 +1204,7 @@ sub MostrarMenuDPantalla
                 my $cambioLugar = 0;
 
                 while($linea = <LISTA>){
-                        @arrayLineaProducto = split(";", $linea);
-                        
+                        @arrayLineaProducto = split(";", $linea);                    
 
                         #el lugar viene dado por el super ID
                         if ($Super_ID == ""){
