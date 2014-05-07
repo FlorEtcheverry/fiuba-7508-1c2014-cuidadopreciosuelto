@@ -178,33 +178,11 @@ $archivos "
 
 # 1er parametro directorio a crear, 2do parametro directorio padre
 function Crear_directorios {
-	primerSubpath=`echo $1 | sed "s-^\([^/]*\)/.*-\1-"`
-	segundoSubpath=`echo $1 | sed -n "s-^[^/]*/\(.*\)-\1-p"`
-	path=$2
-	if [ "$segundoSubpath" == "" -a ! -d "$2/$primerSubpath" ]
-	then
-		mkdir "$path/$primerSubpath"
-	else
-		while [ "$segundoSubpath" != "" ]
-		do
-			if [ ! -d "$path/$primerSubpath" ]
-			then
-				mkdir "$path/$primerSubpath"
-			fi
-			#echo 
-			path="$path/$primerSubpath"
-			primerSubpath=`echo $segundoSubpath | sed "s-^\([^/]*\)/.*-\1-"`
-			segundoSubpath=`echo $segundoSubpath | sed -n "s-^[^/]*/\(.*\)-\1-p"`
-		done
-		if [ ! -d "$path/$primerSubpath" ]
-		then
-			mkdir "$path/$primerSubpath"
-		fi
-	fi
+	mkdir -p "$1"
 }
 
 function Creacion_de_directorios {
-	echo "Creando estructuras de directorio . . . ."
+	if [ $1 != 1 ]; then echo "Creando estructuras de directorio . . . .";fi
 #	Crear_directorios "$BINDIR" "$GRUPO01"
 #	Crear_directorios "$MAEDIR" "$GRUPO01"
 #	Crear_directorios "$MAEDIR/precios" "$GRUPO01"
@@ -586,6 +564,7 @@ Proceso de instalacion cancelado."
 				echo "No se encuentran los archivos fuentes, instalacion interrumpida."
 				exit 1
 			else
+				Creacion_de_directorios 1
 				tmp=`Copiar_archivos "$GRUPO01/datos" "*.mae" "$MAEDIR" `
 				tmp=`Copiar_archivos "$GRUPO01/datos" "*.tab" "$MAEDIR" `
 				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Start" "$BINDIR" `
@@ -741,7 +720,7 @@ Cancele la instalacion o intentelo nuevamente." ERR
 			fi
 			./datos/bin/Logging Installer "Iniciando Instalacion. Esta Ud. seguro? (Si-No): $respuestaInstalacion" INFO
 		done
-		Creacion_de_directorios
+		Creacion_de_directorios 0
 		Instalacion_archivos
 		#creo archivo de conf
 		touch "$CONFDIR/Installer.conf"
