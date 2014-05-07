@@ -5,8 +5,8 @@ comando=$1
 
 #me fijo si el comando se esta ejecutando
 #me fijo que no sea el comando grep ni este
-pid=`ps -ef | grep $comando | grep -e grep -e Stop -v`
-pid=`echo $pid | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
+pid=`ps | grep -w $comando | grep -e grep -e Stop -v`
+pid=`echo $pid | sed 's-^\([^\ ]\+\)\ .*$-\1-g'` 
 
 if [ "$pid" = "" ]
 then

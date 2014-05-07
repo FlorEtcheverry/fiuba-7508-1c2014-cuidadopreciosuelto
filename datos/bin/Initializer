@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-#poner hipotesis si hay una interrupcion o salgo por exit mirar los logs
+#poner hipotesis si hay una interrupcion o salgo por echo mirar los logs
 
 DIRACTUAL=`pwd`
 ENCONTRADO=0
@@ -29,115 +29,108 @@ if [ ! -f "$CONFDIR/Installer.conf" ]
 then
 	touch "./ErrorInicializacion.txt"
 	echo "No esta creado el archivo de configuracion" >> ./ErrorInicializacion.txt
-	exit 1
+	echo -----error-----
 fi
 
 #Busco variables en conf
 CANTLOGDIR=`grep -c '^LOGDIR.*$' $CONFDIR/Installer.conf`
-if [ CANTLOGDIR > 0 ]
+if [ "$CANTLOGDIR" == '1' ]
 then 
 	LOGDIR=`grep '^LOGDIR.*$' $CONFDIR/Installer.conf | sed s-'^[^=]\+=\([^=]\+\)=.*$-\1-'`
-	LOGDIR="$PATHTP/$LOGDIR"
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de logs" >> ./ErrorInicializacion.txt
-	exit 1
+	echo -----error-----
 fi
 
 CANTNOVEDIR=`grep -c '^NOVEDIR.*$' $CONFDIR/Installer.conf`
-if [ CANTNOVEDIR > 0 ]
+if [ "$CANTNOVEDIR" == '1' ]
 then 
 	NOVEDIR=`grep '^NOVEDIR.*$' $CONFDIR/Installer.conf | sed s-'^[^=]\+=\([^=]\+\)=.*$-\1-'`
-	NOVEDIR="$PATHTP/$NOVEDIR"
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de recepcion de novedades" >> ./ErrorInicializacion.txt
-	exit 1
+	echo -----error-----
 fi
 
 CANTRECHDIR=`grep -c '^RECHDIR.*$' $CONFDIR/Installer.conf`
-if [ CANTRECHDIR > 0 ]
+if [ "$CANTRECHDIR" == '1' ]
 then 
 	RECHDIR=`grep '^RECHDIR.*$' $CONFDIR/Installer.conf | sed s-'^[^=]\+=\([^=]\+\)=.*$-\1-'`
-	RECHDIR="$PATHTP/$RECHDIR"
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de rechazados" >> ./ErrorInicializacion.txt
-	exit 1
+	echo -----error-----
 fi
 
 CANTBINDIR=`grep -c '^BINDIR.*$' $CONFDIR/Installer.conf`
-if [ CANTBINDIR > 0 ]
+if [ "$CANTBINDIR" == '1' ]
 then 
 	BINDIR=`grep '^BINDIR.*$' $CONFDIR/Installer.conf | sed s-'^[^=]\+=\([^=]\+\)=.*$-\1-'`
-	BINDIR="$PATHTP/$BINDIR"
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de binarios" >> ./ErrorInicializacion.txt
-	exit 1
+	echo -----error-----
 fi
 
 CANTMAEDIR=`grep -c '^MAEDIR.*$' $CONFDIR/Installer.conf`
-if [ CANTMAEDIR > 0 ]
+if [ "$CANTMAEDIR" == '1' ]
 then 
 	MAEDIR=`grep '^MAEDIR.*$' $CONFDIR/Installer.conf | sed s-'^[^=]\+=\([^=]\+\)=.*$-\1-'`
-	MAEDIR="$PATHTP/$MAEDIR"
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de maestros" >> ./ErrorInicializacion.txt
-	exit 1
+	echo -----error-----
 fi
 
 CANTINFODIR=`grep -c '^INFODIR.*$' $CONFDIR/Installer.conf`
-if [ CANTINFODIR > 0 ]
+if [ "$CANTINFODIR" == '1' ]
 then 
 	INFODIR=`grep '^INFODIR.*$' $CONFDIR/Installer.conf | sed s-'^[^=]\+=\([^=]\+\)=.*$-\1-'`
-	INFODIR="$PATHTP/$INFODIR"
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de informes" >> ./ErrorInicializacion.txt
-	exit 1
+	echo -----error-----
 fi
 
 CANTLOGEXT=`grep -c '^LOGEXT.*$' $CONFDIR/Installer.conf`
-if [ CANTLOGEXT > 0 ]
+if [ "$CANTLOGEXT" == '1' ]
 then 
 	LOGEXT=`grep '^LOGEXT.*$' $CONFDIR/Installer.conf | sed s-'^[^=]\+=\([^=]\+\)=.*$-\1-'`
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijada la extension de los logs" >> ./ErrorInicializacion.txt
-	exit 1
+	echo -----error-----
 fi
 
 CANTACEPDIR=`grep -c '^ACEPDIR.*$' $CONFDIR/Installer.conf`
-if [ CANTACEPDIR > 0 ]
+if [ "$CANTACEPDIR" == '1' ]
 then 
 	ACEPDIR=`grep '^ACEPDIR.*$' $CONFDIR/Installer.conf | sed s-'^[^=]\+=\([^=]\+\)=.*$-\1-'`
-	ACEPDIR="$PATHTP/$ACEPDIR"
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de aceptados" >> ./ErrorInicializacion.txt
-	exit 1
+	echo -----error-----
 fi
 
 CANTLOGSIZE=`grep -c '^LOGSIZE.*$' $CONFDIR/Installer.conf`
-if [ CANTLOGSIZE > 0 ]
+if [ "$CANTLOGSIZE" == '1' ]
 then 
 	LOGSIZE=`grep '^LOGSIZE.*$' $CONFDIR/Installer.conf | sed s-'^[^=]\+=\([^=]\+\)=.*$-\1-'`
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el tamanio de logging" >> ./ErrorInicializacion.txt
-	exit 1
+	echo -----error-----
 fi
 
 CANTGRUPO=`grep -c '^GRUPO.*$' $CONFDIR/Installer.conf`
-if [ CANTGRUPO > 0 ]
+if [ "$CANTGRUPO" == '1' ]
 then 
 	GRUPO=`grep '^GRUPO.*$' $CONFDIR/Installer.conf | sed s-'^[^=]\+=\([^=]\+\)=.*$-\1-'`
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el grupo" >> ./ErrorInicializacion.txt
-	exit 1
+	echo -----error-----
 fi
 
 #checkeo instalacion
@@ -145,7 +138,7 @@ if [ ! -f "$BINDIR/Logging" ]
 then
 	touch "./ErrorInicializacion.txt"
 	echo "No existe el script de logging" >> ./ErrorInicializacion.txt
-	exit 1
+	echo -----error-----
 fi
 
 if [ ! -x "$BINDIR/Logging" ]
@@ -154,13 +147,6 @@ then
 	echo "el script de logging no tenia permisos de ejecucion, se setean los mismos" >> ./ErrorInicializacion.txt
 	chmod +x $BINDIR/Logging
 fi
-
-#creo archivos de log
-touch "$LOGDIR/Initializer.log"
-touch "$LOGDIR/Listener.log"
-touch "$LOGDIR/MasterList.log"
-touch "$LOGDIR/Rating.log"
-touch "$LOGDIR/Reporting.log"
 
 #exporto las variables que usa el logging
 export LOGDIR
@@ -171,63 +157,63 @@ export LOGSIZE
 $BINDIR/Logging Initializer "Comando Initializer inicio de ejecucion" INFO
 $BINDIR/Logging Initializer "Las variables del installer.conf estan seteadas" INFO
 
-if [ ! -f "$BINDIR/Listener.sh" ]
+if [ ! -f "$BINDIR/Listener" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de Listener" INFO
-	exit 1
+	echo -----error-----
 fi
 
-if [ ! -f "$BINDIR/Masterlist.sh" ]
+if [ ! -f "$BINDIR/Masterlist" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de Masterlist" INFO
-	exit 1
+	echo -----error-----
 fi
 
-if [ ! -f "$BINDIR/Rating.sh" ]
+if [ ! -f "$BINDIR/Rating" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de Rating" INFO
-	exit 1
+	echo -----error-----
 fi
 
-if [ ! -f "$BINDIR/reporting.pl" ]
+if [ ! -f "$BINDIR/Reporting" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de reporting" INFO
-	exit 1
+	echo -----error-----
 fi
 
 if [ ! -f "$BINDIR/Start" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de Start" INFO
-	exit 1
+	echo -----error-----
 fi
 
 if [ ! -f "$BINDIR/Stop" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de Stop" INFO
-	exit 1
+	echo -----error-----
 fi
 
 if [ ! -f "$BINDIR/Mover" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de Mover" INFO
-	exit 1
+	echo -----error-----
 fi
 
 #me fijo si existen los archivos en MAEDIR um.tab, asociados.mae y super.mae
 if [ ! -f "$MAEDIR/um.tab" ]
 then
 	$BINDIR/Logging Initializer "el archivo um.tab no existe" INFO
-	exit 1
+	echo -----error-----
 fi
 if [ ! -f "$MAEDIR/asociados.mae" ]
 then
 	$BINDIR/Logging Initializer "el archivo asociados.mae no existe" INFO
-	exit 1
+	echo -----error-----
 fi
 if [ ! -f "$MAEDIR/super.mae" ]
 then
 	$BINDIR/Logging Initializer "el archivo super.mae no existe" INFO
-	exit 1
+	echo -----error-----
 fi
 
 $BINDIR/Logging Initializer "La instalacion fue completa" INFO
@@ -239,7 +225,7 @@ touch "$MAEDIR/precios.mae"
 if [ "$INIT" = "true" ]
 then 
 	$BINDIR/Logging Initializer "El ambiente ya se encuentra inicializado, si quiere reiniciar termine su sesion e ingrese nuevamente"
-	exit 1
+	echo -----error-----
 else
 	#seteo variables de ambiente	
 	export PATHTP
@@ -275,28 +261,28 @@ else
 		chmod +x $BINDIR/Mover
 	fi
 
-	if [ ! -x "$BINDIR/Masterlist.sh" ]
+	if [ ! -x "$BINDIR/Masterlist" ]
 	then
 		$BINDIR/Logging Initializer "el script de masterlist no tenia permisos de ejecucion, se setean los mismos" INFO
-		chmod +x $BINDIR/Masterlist.sh
+		chmod +x $BINDIR/Masterlist
 	fi
 
-	if [ ! -x "$BINDIR/Rating.sh" ]
+	if [ ! -x "$BINDIR/Rating" ]
 	then
 		$BINDIR/Logging Initializer "el script de rating no tenia permisos de ejecucion, se setean los mismos" INFO
-		chmod +x $BINDIR/Rating.sh
+		chmod +x $BINDIR/Rating
 	fi
 
-	if [ ! -x "$BINDIR/Listener.sh" ]
+	if [ ! -x "$BINDIR/Listener" ]
 	then
 		$BINDIR/Logging Initializer "el script de listener no tenia permisos de ejecucion, se setean los mismos" INFO
-		chmod +x $BINDIR/Listener.sh
+		chmod +x $BINDIR/Listener
 	fi
 
-	if [ ! -x "$BINDIR/reporting.pl" ]
+	if [ ! -x "$BINDIR/Reporting" ]
 	then
 		$BINDIR/Logging Initializer "el script de reporting no tenia permisos de ejecucion, se setean los mismos" INFO
-		chmod +x $BINDIR/reporting.pl
+		chmod +x $BINDIR/Reporting
 	fi
 
 	if [ ! -r "$MAEDIR/um.tab" ]
@@ -316,7 +302,7 @@ else
 	fi
 fi
 
-#pregunto si correr el listener.sh
+#pregunto si correr el listener
 echo "Desea efectuar la activacion de Listener? (s/n)"
 
 DECISION=0
@@ -328,21 +314,21 @@ do
 	        [Ss]* ) 
 			DECISION=1
 		        #veo si no hay otro listener corriendo
-			pid=`ps -ef | grep Listener.sh | grep -e grep -e initializer.sh -v`
+			pid=`ps -ef | grep Listener | grep -e grep -e Initializer -v`
 			pid=`echo $pid | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'`
 
 			if [ "$pid" != "" ]
 			then
 				$BINDIR/Logging Initializer "El Listener ya se encuentra ejecutandose" WAR
-				exit 1
+				echo -----error-----
 			fi
 
 			$BINDIR/Logging Initializer "Se activa el listener" INFO
-			$BINDIR/Listener.sh &
-			echo "Para frenar el Listener debe usar el comando Stop enviandole como parametro Listener.sh es decir, por parametro se envia el comando a frenar";break;;
+			$BINDIR/Listener &
+			echo "Para frenar el Listener debe usar el comando Stop enviandole como parametro Listener es decir, por parametro se envia el comando a frenar";break;;
 
 	        [Nn]* ) 
-			echo "Para activar el Listener debe usar el comando Start enviandole como parametro Listener.sh es decir, por parametro se envia el comando a activar";break;;
+			echo "Para activar el Listener debe usar el comando Start enviandole como parametro Listener es decir, por parametro se envia el comando a activar";break;;
 
 	        * ) echo "Por favor responda s o n";;
 	esac
@@ -352,27 +338,30 @@ $BINDIR/Logging Initializer "Inicializacion completa" INFO
 
 #mostrar estado final
 echo "TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright \A9 Grupo 01."
-cd ./conf
+cd $CONFDIR
 echo "Direct. de configuracion: $CONFDIR"
-echo "Archivos de configuracion `ls`"
-cd ..
-cd ./bin
+echo "Archivos de configuracion: "
+echo "`ls`"
+cd $DIRACTUAL
+cd $BINDIR
 echo "Direct. de ejecutables: $BINDIR"
-echo "Archivos de ejecutables `ls`"
-cd ..
-cd ./mae
+echo "Archivos de ejecutables:"
+echo "`ls`"
+cd $DIRACTUAL
+cd $MAEDIR
 echo "Direct. de maestros y tablas: $MAEDIR"
-echo "Archivos de maestros y tablas `ls`"
-cd ..
+echo "Archivos de maestros y tablas: "
+echo "`ls`"
+cd $DIRACTUAL
 echo "Direct. de novedades: $NOVEDIR"
 echo "Direct. de novedades aceptadas: $ACEPDIR"
 echo "Direct. de informes de salida: $INFODIR"
 echo "Direct. de archivos rechazados: $RECHDIR"
-echo "Direct. de logs de comandos: $LOGDIR/<comando>.$LOGEXT"
+echo "Direct. de logs de comandos: $LOGDIR/<comando>$LOGEXT"
 echo "Estado del sistema: Inicializado"
 
 #veo si esta listener corriendo
-pid=`ps -ef | grep Listener.sh | grep -e grep -e initializer.sh -v`
+pid=`ps -ef | grep Listener | grep -e grep -e Initializer -v`
 pid=`echo $pid | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'`
 
 if [ "$pid" != "" ]
@@ -380,4 +369,6 @@ then
 	echo "Listener corriendo bajo el numero: $pid"
 fi
 
-exit 0
+PATH=$PATH:$BINDIR
+cd $DIRACTUAL
+
