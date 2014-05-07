@@ -1,11 +1,5 @@
 #!/bin/bash
 
-if [ "$INIT" != "true" ]
-then 
-	echo No se realizo la inicializacion correspondiente
-	exit 1
-fi
-
 function alta {
 
 arch=$1
@@ -60,8 +54,10 @@ arch=$1
 #borro todos los que voy a reemplazar
 
 regBorrados=`grep -i -c '^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[^;]\+$' $MAEDIR/precios.mae`
-sed -i -n '/^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[^;]\+$/d\' $MAEDIR/precios.mae 2> ./tmp~
-rm tmp~
+#sed -i -n '/^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[^;]\+$/d' $MAEDIR/precios.mae
+#awk '!/^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[^;]\+$/' $MAEDIR/precios.mae > tempPreciosmae && mv tempPreciosmae $MAEDIR/precios.mae
+grep -v '^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[^;]\+$' $MAEDIR/precios.mae > tempPreciosmae && mv tempPreciosmae $MAEDIR/precios.mae
+
 
 $BINDIR/Logging Masterlist "Registros borrados: "$regBorrados INFO
 
