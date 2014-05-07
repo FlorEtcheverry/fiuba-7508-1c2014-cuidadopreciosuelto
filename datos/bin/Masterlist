@@ -60,7 +60,8 @@ arch=$1
 #borro todos los que voy a reemplazar
 
 regBorrados=`grep -i -c '^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[^;]\+$' $MAEDIR/precios.mae`
-sed -i -n '/^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[^;]\+$/d\' $MAEDIR/precios.mae
+sed -i -n '/^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[^;]\+$/d\' $MAEDIR/precios.mae 2> ./tmp~
+rm tmp~
 
 $BINDIR/Logging Masterlist "Registros borrados: "$regBorrados INFO
 
