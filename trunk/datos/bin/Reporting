@@ -3,19 +3,19 @@
 # ------------
 # INICIO MAIN.
 # ------------
+
 system("clear");
 
 if ($ENV{INIT} eq ''){ print "No se realizo la inicializacion correspondiente\n"; exit; }
 
 $opcion = "";
-
 while ($opcion ne "-exit")
 {
         # print "\n\n";
         print "----------------------------------------------------------------------------------\n";
         print "1ra entrada --> Opcion de proceso ('-a' para mas informacion | '-exit' para salir)\n";
-        print "2da entrada --> Filtro de usuario\n";
-        print "3ra entrada --> Filtro de Supermercado\n";
+        print "2da entrada --> Filtro de usuario [y/n]\n";
+        print "3ra entrada --> Filtro de Supermercado [y/n]\n";
         print "4ta entrada --> Opcion de grabado ('-w') [y/n]\n";
         print "----------------------------------------------------------------------------------\n";
 
@@ -59,7 +59,7 @@ while ($opcion ne "-exit")
 		
                $pathLP = $ENV{GRUPO01}.$ENV{INFODIR}."\/pres";
                 
-
+		
                 print "2da entrada:  [y/n] \n";
 		$opcionF = <STDIN>;
                 chomp($opcionF);
@@ -72,20 +72,17 @@ while ($opcion ne "-exit")
 			print "No se usara un filtro de usuarios.\n"
 		}	
 
-#                $filtroUsuario = <STDIN>;
-#                chomp($filtroUsuario);
-
-                print "3ra entrada:  [y/n] \n";
-		$opcionF = <STDIN>;
-                chomp($opcionF);
-		if ( $opcionF eq "y" ) {
-			$filtroSuper = &mostrarYCargarMenuFiltroSuper(\%hashSuper);
-		}else
-		{
-			print "No se usara un filtro de supermercados.\n"
-		}	
-#                $filtroSuper = <STDIN>;
-#                chomp($filtroSuper);
+		if ( $opcion ne "-f"){
+		        print "3ra entrada:  [y/n] \n";
+			$opcionF = <STDIN>;
+		        chomp($opcionF);
+			if ( $opcionF eq "y" ) {
+				$filtroSuper = &mostrarYCargarMenuFiltroSuper(\%hashSuper);
+			}else
+			{
+				print "No se usara un filtro de supermercados.\n";
+			}
+		}else{ print "3ra entrada: Con opcion -f no se permite el uso de filtros por supermercado-provincia. \n"; }
 
                 print "4ta entrada [y/n]: ";
                 $opcionDeGrabado = <STDIN>;
@@ -201,7 +198,7 @@ sub mostrarYCargarMenuFiltroUsuario
 		$filtroUsersAux = $filtroUsersAux.@filtroUser[$i];
    	}
 	
-	return ("$filtroUsersAux");
+	$filtroUsersAux;
 }
 
 
@@ -214,12 +211,12 @@ sub mostrarYCargarMenuFiltroSuper
 	print "Seleccione los super_provincia deseados de la siguiente lista: \n";
 	
 	foreach $key (keys $_[0]){
-		print "Spuermercado posible: $_[0]{$key} \n";
+		print "Supermercado posible: $_[0]{$key} \n";
 	}
 	
 	print "Para elegir los supermercados a considerar ingreselos y presione enter entre cada uno y presione CTRL+D para terminar \n";
 
-	$filtroSuperAux;
+	$filtroSuperAux="";
 	my @filtroSupers=<STDIN>;
 	
 	for (my $i=0; $i<=$#filtroSupers; $i++)
@@ -288,12 +285,10 @@ sub MostrarMenuA_Ayuda
         print "         '-f' --> Faltante.\n";
         print "         '-exit' --> Salir.\n";
         print "2da entrada:\n";
-        print "         Path ubicacion 'Listas Presupuestadas' a procesar.\n";
-        print "3ra entrada:\n";
         print "         Filtro de Usuario\n";
-        print "4ta entrada:\n";
+        print "3ra entrada:\n";
         print "         Filtro de ID de Supermercado\n";
-        print "5ta entrada:\n";
+	print "4ta entrada:\n";
         print "         '-w' [y/n] --> Opcion de Grabado\n";
         print "                        [y] no muestra por pantalla y graba en archivo de salida.\n";
         print "                        [n] muestra por pantalla.\n";
@@ -344,7 +339,8 @@ sub MostrarMenuR_Referencia
                                 my @arrayData = split(";", $linea);
 				my $Super_provLinea = $_[2]{$arrayData[2]};
 				#si el super-prov de la linea encaja en el filtro lo imprimo
-				if ( $_[4] =~  /$Super_provLinea/ or length($_[4]) == 0 ){
+				$posSuper=index($_[4],"$Super_provLinea");
+				if ( (($posSuper >= 0) or ($_[4] eq "")) and ( "$Super_provLinea" ne "" ) ){
 					if ($_[3] eq "y")
 					{
 						$infoSalida = $infoSalida."$arrayData[0] \| $arrayData[1] \| $arrayData[3] \| $arrayData[4] \| $_[2]{$arrayData[2]}\n";
@@ -409,7 +405,9 @@ sub MostrarMenuM_MenorPrecioArchivo
                 	@arrayLineaProducto = split(";", $linea);
 			my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 			#si el super-prov de la linea encaja en el filtro lo imprimo
-			if ( $_[1] =~  /$Super_provLinea/ or length ($_[1]) == 0){
+						$posProv=index($_[1],$Super_provLinea);
+
+			if ( (((("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )){
 						
 		                #Me fijo si es de precios cuidados y lo salteo.
 		                if ( $arrayLineaProducto[2] < 100 ){
@@ -438,7 +436,7 @@ sub MostrarMenuM_MenorPrecioArchivo
                 
                 #recorro hashes
                 foreach $clave (keys %hashPrecios){
-					print SALIDA "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $_[2]{$Super_ID} \n";
+					print SALIDA "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| ".chomp($hashPrecios{$clave})." \| $_[2]{$hashLugares{$clave}} \n";
                 }
 
                 close(LISTA);           
@@ -471,7 +469,9 @@ sub MostrarMenuM_MenorPrecioPantalla
                     @arrayLineaProducto = split(";", $linea);
 					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $_[1] =~  /$Super_provLinea/ or length ($_[1]) == 0){
+								$posProv=index($_[1],$Super_provLinea);
+
+			if ( (((("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )){
 
                         #Me fijo si es de precios cuidados y lo salteo.
                         if ( $arrayLineaProducto[2] < 100 ){
@@ -499,7 +499,7 @@ sub MostrarMenuM_MenorPrecioPantalla
 
                 #recorro hashes
                 foreach $clave (keys %hashPrecios){
-                    print "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $_[2]{$Super_ID} \n";
+                    print "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \|".chomp($hashPrecios{$clave})."\| $_[2]{$hashLugares{$clave}} \n";
                 }
 
                 close(LISTA);           
@@ -523,7 +523,7 @@ sub MostrarMenuF_Faltante
 		$rutaSalida = $ENV{INFODIR}."/info.".$ext;
                 open(SALIDA,">$rutaSalida");
         }
-#hash en 2 , filtro en 3
+
         for (my $i=0;$i<=$_[1];$i++)
         {
                 if ($_[4] eq "y")
@@ -540,16 +540,6 @@ sub MostrarMenuF_Faltante
 
                 while ($linea = <LISTA>)
                 {
-                        if (length($_[3]) > 0)
-                        {
-							    $linea = $linea.";";
-                                my @arrayData = split(";",$linea);
-								my $super_prov = $_[2]{$arrayData[2]};
-                                if ($Super_provLinea =~ /$_[3]*/)
-                                {
-                                        next;
-                                }
-                        }
 
                         chomp($linea);
                         $chr = chop($linea);
@@ -588,9 +578,9 @@ sub MostrarMenuF_Faltante
                 if ($_[4] eq "y")
                 {
                         print SALIDA "$infoSalida\n";
-                }
-
-                print "\n";
+                }else{
+	                print "\n";
+		}
         }
 
         if ($_[4] eq "y")
@@ -636,7 +626,9 @@ sub MostrarMenuDR_DondeComprarYReferenciaArch
                     @arrayLineaProducto = split(";", $linea);
 					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $_[1] =~  /$Super_provLinea/ or length ($_[1]) == 0){
+								$posProv=index($_[1],$Super_provLinea);
+
+			if ( (((("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )){
 
                         #Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
                         #si lo es guardo el menor de los precios cuidados y saltear.
@@ -685,16 +677,17 @@ sub MostrarMenuDR_DondeComprarYReferenciaArch
                         
 
                         #el lugar viene dado por el super ID
-                        if ($Super_ID == ""){
+                        if ($Super_ID eq ""){
                                 $Super_ID = $arrayLineaProducto[2];
                                 $cambioLugar = 1;
                         }else{
-                                if ( $Super_ID == $arrayLineaProducto[2] ){
+                                if ( $Super_ID eq $arrayLineaProducto[2] ){
                                         $cambioLugar = 0;
-                                }else{
-                                        print SALIDA "\n";      
+                                }else{  
+					if ("$escribi" ne "false"){ print SALIDA "\n";}        
                                         $Super_ID = $arrayLineaProducto[2];
                                         $cambioLugar = 1;
+					$escribi="false";
                                 }
                         }
 
@@ -709,12 +702,13 @@ sub MostrarMenuDR_DondeComprarYReferenciaArch
                                                         { $observ="**" ;}
                                                 if ( $hashPrecios{$clave} <= $hashPreciosCuidados{$clave} )
                                                         { $observ="*" ;}
-                                                if ( $hashPreciosCuidados{$clave} == "" )
+                                                if ( $hashPreciosCuidados{$clave} eq "" )
                                                         { $observ="***" ;}
 
 #NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
 
-                                                print SALIDA "$_[2]{$Super_ID} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $hashPreciosCuidados{$clave} \| $observ \n";
+                                                print SALIDA "$_[2]{$Super_ID} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \|".chomp($hashPrecios{$clave})."\| $hashPreciosCuidados{$clave} \| $observ \n";
+						$escribi="true";
                                         #necesarios si no ordeno el archivo por lugares
                                         delete($hashPrecios{$clave});
                                         delete($hashPrecios{$clave});
@@ -746,7 +740,6 @@ sub MostrarMenuDR_DondeComprarYReferenciaPantalla
                 
                 open (LISTA, $_[0][$i]);
 
-
                 #me creo hashes que tendran los productos como claves
                 my %hashPrecios=();
                 my %hashPreciosCuidados=();
@@ -763,7 +756,9 @@ sub MostrarMenuDR_DondeComprarYReferenciaPantalla
                     @arrayLineaProducto = split(";", $linea);
 					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $_[1] =~  /$Super_provLinea/ or length ($_[1]) == 0){
+								$posProv=index($_[1],$Super_provLinea);
+
+			if ( (((("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )){
 
                         #Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
                         #si lo es guardo el menor de los precios cuidados y saltear.
@@ -810,16 +805,17 @@ sub MostrarMenuDR_DondeComprarYReferenciaPantalla
                 while($linea = <LISTA>){
                         @arrayLineaProducto = split(";", $linea);
                         #el lugar viene dado por el super ID
-                        if ($Super_ID == ""){
+                        if ($Super_ID eq ""){
                                 $Super_ID = $arrayLineaProducto[2];
                                 $cambioLugar = 1;
                         }else{
-                                if ( $Super_ID == $arrayLineaProducto[2] ){
+                                if ( $Super_ID eq $arrayLineaProducto[2] ){
                                         $cambioLugar = 0;
                                 }else{
-                                        print "\n";     
+                                        if ($escribi ne "false"){ print "\n";}     
                                         $Super_ID = $arrayLineaProducto[2];
                                         $cambioLugar = 1;
+					$escribi="false";
                                 }
                         }
 
@@ -834,12 +830,13 @@ sub MostrarMenuDR_DondeComprarYReferenciaPantalla
                                                         { $observ="**" ;}
                                                 if ( $hashPrecios{$clave} <= $hashPreciosCuidados{$clave} )
                                                         { $observ="*" ;}
-                                                if ( $hashPreciosCuidados{$clave} == "" )
+                                                if ( $hashPreciosCuidados{$clave} eq "" )
                                                         { $observ="***" ;}
 
 #NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
 
-                                                print "$_[2]{$Super_ID} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $hashPreciosCuidados{$clave} \| $observ \n";
+                                                print "$_[2]{$Super_ID} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| ".chomp($hashPrecios{$clave})." \| $hashPreciosCuidados{$clave} \| $observ \n";
+						$escribi="true";
                                         #necesarios si no ordeno el archivo por lugares
                                         delete($hashPrecios{$clave});
                                         delete($hashPrecios{$clave});
@@ -892,7 +889,9 @@ sub MostrarMenuMRArchivo
                     @arrayLineaProducto = split(";", $linea);
 					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $_[1] =~  /$Super_provLinea/ or length ($_[1]) == 0){
+								$posProv=index($_[1],$Super_provLinea);
+
+			if ( (((("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )){
 
                         #Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
                         #si lo es guardo el menor de los precios cuidados y saltear.
@@ -935,12 +934,12 @@ sub MostrarMenuMRArchivo
                                 { $observ="**" ;}
                         if ( $hashPrecios{$clave} <= $hashPreciosCuidados{$clave} )
                                 { $observ="*" ;}
-                        if ( $hashPreciosCuidados{$clave} == "" )
+                        if ( $hashPreciosCuidados{$clave} eq "" )
                                 { $observ="***" ;}
 
 #NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
-        
-                        print SALIDA "$_[2]{$Super_ID} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $hashPreciosCuidados{$clave} \| $observ \n";
+        		
+                        print SALIDA "$_[2]{$hashLugares{$clave}} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| ".chomp($hashPrecios{$clave})." \| $hashPreciosCuidados{$clave} \| $observ \n";
                 }
 
                 close(LISTA);           
@@ -979,7 +978,9 @@ sub MostrarMenuMRPantalla
                     @arrayLineaProducto = split(";", $linea);
 					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
 					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $_[1] =~  /$Super_provLinea/ or length ($_[1]) == 0){
+								$posProv=index($_[1],$Super_provLinea);
+
+			if ( (((("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )){
 
                         #Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
                         #si lo es guardo el menor de los precios cuidados y saltear.
@@ -1022,12 +1023,12 @@ sub MostrarMenuMRPantalla
                                 { $observ="**" ;}
                         if ( $hashPrecios{$clave} <= $hashPreciosCuidados{$clave} )
                                 { $observ="*" ;}
-                        if ( $hashPreciosCuidados{$clave} == "" )
+                        if ( $hashPreciosCuidados{$clave} eq "" )
                                 { $observ="***" ;}
 
 #NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
                         
-                        print "$_[2]{$Super_ID} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $hashPreciosCuidados{$clave} \| $observ \n";
+                        print "$_[2]{$hashLugares{$clave}} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| ".chomp($hashPrecios{$clave})." \| $hashPreciosCuidados{$clave} \| $observ \n";
                 }
 
                 close(LISTA);           
@@ -1070,9 +1071,11 @@ sub MostrarMenuDArchivo
 
                     #obtengo los campos del registro de la lista presupuesteada que estoy analizando 
                     @arrayLineaProducto = split(";", $linea);
-					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
-					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $_[1] =~  /$Super_provLinea/ or length ($_[1]) == 0){
+			my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
+			#si el super-prov de la linea encaja en el filtro lo imprimo
+			$posProv=index($_[1],$Super_provLinea);
+
+			if ( (((("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )){
 
                         #Me fijo si es de precios cuidados y lo salteo.
                         if ( $arrayLineaProducto[2] < 100 ){
@@ -1106,22 +1109,23 @@ sub MostrarMenuDArchivo
                 #recorro de nuevo separando por lugares, mostrando el precio cuidado correspondiente y el menor precio que encontre antes
                 my $Super_ID="";
                 my $cambioLugar = 0;
-
+		$escribi="false";
                 while($linea = <LISTA>){
                         @arrayLineaProducto = split(";", $linea);
                         
 
                         #el lugar viene dado por el super ID
-                        if ($Super_ID == ""){
+                        if ($Super_ID eq ""){
                                 $Super_ID = $arrayLineaProducto[2];
                                 $cambioLugar = 1;
                         }else{
-                                if ( $Super_ID == $arrayLineaProducto[2] ){
+                                if ( $Super_ID eq $arrayLineaProducto[2] ){
                                         $cambioLugar = 0;
-                                }else{
-                                        print SALIDA "\n";      
+                                }else{                                        
+					if ($escribi ne "false"){ print SALIDA "\n";}
                                         $Super_ID = $arrayLineaProducto[2];
                                         $cambioLugar = 1;
+					$escribi="false";
                                 }
                         }
 
@@ -1135,7 +1139,7 @@ sub MostrarMenuDArchivo
 
 #"NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA"   
 
-                                                print SALIDA "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $_[2]{$Super_ID} \n";
+                                                print SALIDA "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| ".chomp($hashPrecios{$clave})." \| $_[2]{$Super_ID} \n";		$escribi="true";
                                         #necesarios si no ordeno el archivo por lugares
                                         delete($hashPrecios{$clave});
                                         delete($hashPrecios{$clave});
@@ -1176,33 +1180,36 @@ sub MostrarMenuDPantalla
 
                 while($linea = <LISTA>){
 
-                    #obtengo los campos del registro de la lista presupuesteada que estoy analizando 
-                    @arrayLineaProducto = split(";", $linea);
-					my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
-					#si el super-prov de la linea encaja en el filtro lo imprimo
-					if ( $_[1] =~  /$Super_provLinea/ or length ($_[1]) == 0){
-                        #Me fijo si es de precios cuidados y lo salteo.
-                        if ( $arrayLineaProducto[2] < 100 ){
-                                next;
-                        }
-                        #Ahora si no es precio cuidado:
-                        #si el producto no esta en el hash lo meto con el precio y el super ID en el otro hash, etc.
-                        if (! exists( $hashPrecios{$arrayLineaProducto[1]} ) ) {
-                                $hashPrecios{$arrayLineaProducto[1]}=$arrayLineaProducto[4];
-                                $hashLugares{$arrayLineaProducto[1]}=$arrayLineaProducto[2];
-                                $hashNumItem{$arrayLineaProducto[1]}=$arrayLineaProducto[0];
-                                $hashDescripcion{$arrayLineaProducto[1]}=$arrayLineaProducto[3];
-                        }#si esta obviamente comparo y si el precio es mejor reemplazo
-                        else{
-                                #COMPARAR PRECIO ; REEMPLAZAR PRECIO Y LUGAR SI CORRESPONDE!!
-                                if ( $hashPrecios{$arrayLineaProducto[1]} > $arrayLineaProducto[4] ){
-                                        $hashPrecios{$arrayLineaProducto[1]} = $arrayLineaProducto[4];
-                                        $hashLugares{$arrayLineaProducto[1]} = $arrayLineaProducto[2];
-                                        $hashNumItem{$arrayLineaProducto[1]}=$arrayLineaProducto[0];
-                                        $hashDescripcion{$arrayLineaProducto[1]}=$arrayLineaProducto[3];
-                                }
-                        }
-					}
+		        #obtengo los campos del registro de la lista presupuesteada que estoy analizando 
+		        @arrayLineaProducto = split(";", $linea);
+			my $Super_provLinea = $_[2]{$arrayLineaProducto[2]};
+			#si el super-prov de la linea encaja en el filtro lo imprimo
+
+			$posProv=index($_[1],$Super_provLinea);
+
+			if ( ((("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )){
+		                #Me fijo si es de precios cuidados y lo salteo.
+		                if ( $arrayLineaProducto[2] < 100 ){
+		                        next;
+		                }
+		                #Ahora si no es precio cuidado:
+		                #si el producto no esta en el hash lo meto con el precio y el super ID en el otro hash, etc.
+		                if (! exists( $hashPrecios{$arrayLineaProducto[1]} ) ) {
+		                        $hashPrecios{$arrayLineaProducto[1]}=$arrayLineaProducto[4];
+		                        $hashLugares{$arrayLineaProducto[1]}=$arrayLineaProducto[2];
+		                        $hashNumItem{$arrayLineaProducto[1]}=$arrayLineaProducto[0];
+		                        $hashDescripcion{$arrayLineaProducto[1]}=$arrayLineaProducto[3];
+		                }#si esta obviamente comparo y si el precio es mejor reemplazo
+		                else{
+		                        #COMPARAR PRECIO ; REEMPLAZAR PRECIO Y LUGAR SI CORRESPONDE!!
+		                        if ( $hashPrecios{$arrayLineaProducto[1]} > $arrayLineaProducto[4] ){
+		                                $hashPrecios{$arrayLineaProducto[1]} = $arrayLineaProducto[4];
+		                                $hashLugares{$arrayLineaProducto[1]} = $arrayLineaProducto[2];
+		                                $hashNumItem{$arrayLineaProducto[1]}=$arrayLineaProducto[0];
+		                                $hashDescripcion{$arrayLineaProducto[1]}=$arrayLineaProducto[3];
+		                        }
+		                }
+			}
                 }
 
                 #necesito hacer esta basura o no empieza a recorrer por el ppio de nuevo
@@ -1213,21 +1220,23 @@ sub MostrarMenuDPantalla
                 #recorro de nuevo separando por lugares, mostrando el precio cuidado correspondiente y el menor precio que encontre antes
                 my $Super_ID="";
                 my $cambioLugar = 0;
+		$escribi="false";
 
                 while($linea = <LISTA>){
                         @arrayLineaProducto = split(";", $linea);                    
 
                         #el lugar viene dado por el super ID
-                        if ($Super_ID == ""){
+                        if ($Super_ID eq ""){
                                 $Super_ID = $arrayLineaProducto[2];
                                 $cambioLugar = 1;
                         }else{
-                                if ( $Super_ID == $arrayLineaProducto[2] ){
+                                if ( $Super_ID eq $arrayLineaProducto[2] ){
                                         $cambioLugar = 0;
-                                }else{
-                                        print "\n";     
+                                }else{   
+					if ($escribi ne "false"){ print "\n";}
                                         $Super_ID = $arrayLineaProducto[2];
                                         $cambioLugar = 1;
+					$escribi="false";
                                 }
                         }
 
@@ -1241,7 +1250,7 @@ sub MostrarMenuDPantalla
 
 #"NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA"   
 
-                                                print "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $_[2]{$Super_ID} \n";
+                                                print "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| ".chomp($hashPrecios{$clave})." \| $_[2]{$Super_ID} \n";			$escribi="true";
                                         #necesarios si no ordeno el archivo por lugares
                                         delete($hashPrecios{$clave});
                                         delete($hashPrecios{$clave});
