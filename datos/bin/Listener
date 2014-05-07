@@ -130,7 +130,7 @@ if [ "${#files[@]}" != "0" ] ; then
 	pidMstLst=`echo $pidMstLst | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
 
 	if [ "$pidRat" = "" ] && [ "$pidMstLst" = "" ] ; then
-		$BINDIR/Start Masterlist
+		tmp=`$BINDIR/Start Masterlist`
 		if [ $? = 0 ] ; then
 			pid=`ps -ef | grep  "Masterlist" | grep -e grep -v`
 			pid=`echo $pid | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
@@ -156,7 +156,7 @@ if [ ${#files[@]} -gt 0 ] ; then
 	pidMstLst=`echo $pidMstLst | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
 
 	if [ "$pidRat" = "" ] && [ "$pidMstLst" = "" ] ; then
-		$BINDIR/Start Rating
+		tmp=`$BINDIR/Start Rating`
 		if [ $? = 0 ] ; then
 			pid=`ps -ef | grep "Rating" | grep -e grep -v`
 			pid=`echo $pid | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
