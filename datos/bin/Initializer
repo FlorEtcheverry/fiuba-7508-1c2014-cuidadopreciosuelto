@@ -1,5 +1,6 @@
 #!/bin/bash
 
+function main {
 #poner hipotesis si hay una interrupcion o salgo por echo mirar los logs
 
 DIRACTUAL=`pwd`
@@ -29,7 +30,8 @@ if [ ! -f "$CONFDIR/Installer.conf" ]
 then
 	touch "./ErrorInicializacion.txt"
 	echo "No esta creado el archivo de configuracion" >> ./ErrorInicializacion.txt
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
 fi
 
 #Busco variables en conf
@@ -40,7 +42,8 @@ then
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de logs" >> ./ErrorInicializacion.txt
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
 fi
 
 CANTNOVEDIR=`grep -c '^NOVEDIR.*$' $CONFDIR/Installer.conf`
@@ -50,7 +53,8 @@ then
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de recepcion de novedades" >> ./ErrorInicializacion.txt
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
 fi
 
 CANTRECHDIR=`grep -c '^RECHDIR.*$' $CONFDIR/Installer.conf`
@@ -60,7 +64,8 @@ then
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de rechazados" >> ./ErrorInicializacion.txt
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
 fi
 
 CANTBINDIR=`grep -c '^BINDIR.*$' $CONFDIR/Installer.conf`
@@ -70,7 +75,8 @@ then
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de binarios" >> ./ErrorInicializacion.txt
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
 fi
 
 CANTMAEDIR=`grep -c '^MAEDIR.*$' $CONFDIR/Installer.conf`
@@ -80,7 +86,8 @@ then
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de maestros" >> ./ErrorInicializacion.txt
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
 fi
 
 CANTINFODIR=`grep -c '^INFODIR.*$' $CONFDIR/Installer.conf`
@@ -90,7 +97,8 @@ then
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de informes" >> ./ErrorInicializacion.txt
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
 fi
 
 CANTLOGEXT=`grep -c '^LOGEXT.*$' $CONFDIR/Installer.conf`
@@ -100,7 +108,8 @@ then
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijada la extension de los logs" >> ./ErrorInicializacion.txt
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
 fi
 
 CANTACEPDIR=`grep -c '^ACEPDIR.*$' $CONFDIR/Installer.conf`
@@ -110,7 +119,8 @@ then
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el directorio de aceptados" >> ./ErrorInicializacion.txt
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
 fi
 
 CANTLOGSIZE=`grep -c '^LOGSIZE.*$' $CONFDIR/Installer.conf`
@@ -120,7 +130,8 @@ then
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el tamanio de logging" >> ./ErrorInicializacion.txt
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
 fi
 
 CANTGRUPO=`grep -c '^GRUPO.*$' $CONFDIR/Installer.conf`
@@ -130,15 +141,32 @@ then
 else
 	touch "./ErrorInicializacion.txt"
 	echo "No esta fijado el grupo" >> ./ErrorInicializacion.txt
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
 fi
+
+if [ ! -d "$BINDIR" ]
+then
+	then echo "No se encuentra la carpeta de binarios" >> ./ErrorInicializacion.txt
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
+fi
+
+if [ ! -d "$LOGDIR" ]
+then
+	then echo "No la carpeta de logs" >> ./ErrorInicializacion.txt
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
+fi
+
 
 #checkeo instalacion
 if [ ! -f "$BINDIR/Logging" ]
 then
 	touch "./ErrorInicializacion.txt"
 	echo "No existe el script de logging" >> ./ErrorInicializacion.txt
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
+	return 1
 fi
 
 if [ ! -x "$BINDIR/Logging" ]
@@ -160,60 +188,79 @@ $BINDIR/Logging Initializer "Las variables del installer.conf estan seteadas" IN
 if [ ! -f "$BINDIR/Listener" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de Listener" INFO
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver archivo de log"
+	return 1		
 fi
 
 if [ ! -f "$BINDIR/Masterlist" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de Masterlist" INFO
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver archivo de log"
+	return 1
 fi
 
 if [ ! -f "$BINDIR/Rating" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de Rating" INFO
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver archivo de log"
+	return 1
 fi
 
 if [ ! -f "$BINDIR/Reporting" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de reporting" INFO
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver archivo de log"
+	return 1
 fi
 
 if [ ! -f "$BINDIR/Start" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de Start" INFO
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver archivo de log"
+	return 1
 fi
 
 if [ ! -f "$BINDIR/Stop" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de Stop" INFO
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver archivo de log"
+	return 1
 fi
 
 if [ ! -f "$BINDIR/Mover" ]
 then
 	$BINDIR/Logging Initializer "No existe el script de Mover" INFO
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver archivo de log"
+	return 1
 fi
 
 #me fijo si existen los archivos en MAEDIR um.tab, asociados.mae y super.mae
+
+if [ ! -d "$MAEDIR" ]
+then
+	$BINDIR/Logging Initializer "Directorio $MAEDIR inexistente" INFO
+	echo "Se ha producido un error, para mas informacion ver archivo de log"
+	return 1
+fi
+
 if [ ! -f "$MAEDIR/um.tab" ]
 then
 	$BINDIR/Logging Initializer "el archivo um.tab no existe" INFO
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver archivo de log"
+	return 1
 fi
 if [ ! -f "$MAEDIR/asociados.mae" ]
 then
 	$BINDIR/Logging Initializer "el archivo asociados.mae no existe" INFO
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver archivo de log"
+	return 1
 fi
+
 if [ ! -f "$MAEDIR/super.mae" ]
 then
 	$BINDIR/Logging Initializer "el archivo super.mae no existe" INFO
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver archivo de log"
+	return 1
 fi
 
 $BINDIR/Logging Initializer "La instalacion fue completa" INFO
@@ -225,7 +272,8 @@ touch "$MAEDIR/precios.mae"
 if [ "$INIT" = "true" ]
 then 
 	$BINDIR/Logging Initializer "El ambiente ya se encuentra inicializado, si quiere reiniciar termine su sesion e ingrese nuevamente"
-	echo -----error-----
+	echo "Se ha producido un error, para mas informacion ver archivo de log"
+	return 1
 else
 	#seteo variables de ambiente	
 	export PATHTP
@@ -241,6 +289,14 @@ else
 	export RECHDIR
 	export INIT=true
 
+	mkdir -p "$BINDIR"
+	mkdir -p "$MAEDIR/precios/proc"
+	mkdir -p "$NOVEDIR"
+	mkdir -p "$ACEPDIR/proc"
+	mkdir -p "$INFODIR/pres"
+	mkdir -p "$RECHDIR"	
+	mkdir -p "$LOGDIR"
+	
 	#checkeo permisos de archivos FALTA PERMISO DE EJECUCION PARA LOS SCRIPTS
 
 	if [ ! -x "$BINDIR/Start" ]
@@ -320,7 +376,7 @@ do
 			if [ "$pid" != "" ]
 			then
 				$BINDIR/Logging Initializer "El Listener ya se encuentra ejecutandose" WAR
-				echo -----error-----
+				return 0
 			fi
 
 			$BINDIR/Logging Initializer "Se activa el listener" INFO
@@ -371,4 +427,6 @@ fi
 
 PATH=$PATH:$BINDIR
 cd $DIRACTUAL
+}
 
+main
