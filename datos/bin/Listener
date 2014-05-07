@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ "$INIT" != "true" ]
+then 
+	echo No se realizo la inicializacion correspondiente
+	exit 1
+fi
+
 while [ 0 ]
 do
 touch $LOGDIR"/Listener".$LOGEXT

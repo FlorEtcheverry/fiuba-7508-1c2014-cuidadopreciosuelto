@@ -1,4 +1,12 @@
 #!/bin/sh
+
+if [ "$INIT" != "true" ]
+then 
+	echo No se realizo la inicializacion correspondiente
+	exit 1
+fi
+
+
 #me guardo el directorio actual
 directorio_ppal=`pwd`
 
