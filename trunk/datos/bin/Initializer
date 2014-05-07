@@ -145,14 +145,14 @@ else
 	return 1
 fi
 
-if [ ! -d "$BINDIR" ]
+if ! [ -d "$BINDIR" ]
 then
 	echo "No se encuentra la carpeta de binarios" >> ./ErrorInicializacion.txt
 	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
 	return 1
 fi
 
-if [ ! -d "$LOGDIR" ]
+if ! [ -d "$LOGDIR" ]
 then
 	echo "No la carpeta de logs" >> ./ErrorInicializacion.txt
 	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
@@ -180,6 +180,7 @@ fi
 export LOGDIR
 export LOGEXT
 export LOGSIZE
+export INIT=true
 
 #inicializo el archivo de log del Initializer
 $BINDIR/Logging Initializer "Comando Initializer inicio de ejecucion" INFO
@@ -287,7 +288,6 @@ else
 	export ACEPDIR
 	export NOVEDIR
 	export RECHDIR
-	export INIT=true
 
 	mkdir -p "$BINDIR"
 	mkdir -p "$MAEDIR/precios/proc"
