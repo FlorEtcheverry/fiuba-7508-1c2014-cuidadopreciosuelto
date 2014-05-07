@@ -38,11 +38,11 @@ fi
 
 #valido archivo de precios
 #tiene q tener formato: superid;colaborador;fecha(aaaammdd);desprod;precio
-lineasnocumplen=`grep -c -v '^[^;]*;[^;]*;[0-9]\{4\}[0-1][0-9][0-3][0-9];[^;]*;[0-9]*.[0-9][0-9]$' "$archPecios"`
+lineasnocumplen=`grep -c -v '^[^;]*;[^;]*;[0-9]\{4\}[0-1][0-9][0-3][0-9];[^;]*;[0-9]\+.*[0-9]*$' "$archPecios"`
 #si esta vacio es valido
 if [ "$lineasnocumplen" != '0' ]
 then 
-	$BINDIR/Logging Rating "Se cancela por archivo maestro de precios invalido." ERR
+	$BINDIR/Logging Rating "Se cancela por archivo maestro de precios invalido. $lineasnocumplen" ERR
 	exit 3
 fi
 
