@@ -1,5 +1,4 @@
 #! /usr/bin/perl
-
 #leo los parametros
 ($comando,$mensaje,$tipo) = @ARGV;
 
@@ -58,5 +57,9 @@ sub getArchivo{
 	if ($comando eq "Installer"){
 		return("./conf/Installer.log");
 	}
+	if ($ENV{INIT} eq ''){
+		print "No se realizo la inicializacion correspondiente\n";
+		exit;
+	}	
 	return("$ENV{LOGDIR}/$comando.$ENV{LOGEXT}");
 }
