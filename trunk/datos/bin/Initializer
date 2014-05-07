@@ -147,14 +147,14 @@ fi
 
 if [ ! -d "$BINDIR" ]
 then
-	then echo "No se encuentra la carpeta de binarios" >> ./ErrorInicializacion.txt
+	echo "No se encuentra la carpeta de binarios" >> ./ErrorInicializacion.txt
 	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
 	return 1
 fi
 
 if [ ! -d "$LOGDIR" ]
 then
-	then echo "No la carpeta de logs" >> ./ErrorInicializacion.txt
+	echo "No la carpeta de logs" >> ./ErrorInicializacion.txt
 	echo "Se ha producido un error, para mas informacion ver ./ErrorInicializacion.txt"
 	return 1
 fi

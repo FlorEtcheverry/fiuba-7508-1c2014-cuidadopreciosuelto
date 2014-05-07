@@ -1,5 +1,11 @@
 #!/bin/sh
 
+if [ "$INIT" != "true" ]
+then 
+	echo No se realizo la inicializacion correspondiente
+	exit 1
+fi
+
 #obtengo el comando a detener
 comando=$1
 
