@@ -98,7 +98,7 @@ do
 		done
 		
 		#agarra la linea de la unidad
-		unidades=`grep -w -i $unidad $archUnidades`
+		unidades=`grep -w -i $unidad $archUnidades | tr ";" " "`
 		expReg=''
 		resultado=''
 
@@ -109,7 +109,7 @@ do
 			expReg='^[^;]*;[^;]*;[^;]*;[^;]*\ \+'"$eq2"';[^;]*$'
 			resultadotemp=`echo "$coincidencia" | grep -i "$expReg"`
 			if [[ $resultado == '' ]]
-			then resultado=$resultadotemp
+			then resultado="$resultadotemp"
 			elif ! [[ $resultadotemp == '' ]]
 			then resultado=`echo -ne "$resultado\n$resultadotemp"`
 			fi
@@ -122,7 +122,7 @@ do
 			superid=`echo $i | sed 's-^\([^;]*\);.*-\1-'`
 			encDesc=`echo $i | sed 's-^[^;]*;[^;]*;[^;]*;\([^;]*\);.*$-\1-'`
 			encPrecio=`echo $i | sed 's-^[^;]*;[^;]*;[^;]*;[^;]*;\(.*\)$-\1-'`
-			echo "$numero;$descr;$superid;$encDesc;$encPrecio" >> $INFODIR/pres/$nombre
+			echo "$numero;$descr $unidad;$superid;$encDesc;$encPrecio" >> $INFODIR/pres/$nombre
 		done <<< "$resultado"
 
 	done <$arch

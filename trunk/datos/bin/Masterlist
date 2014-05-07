@@ -53,7 +53,7 @@ arch=$1
 
 #borro todos los que voy a reemplazar
 
-regBorrados=`grep -i -c '^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[0-9]\+$' $MAEDIR/precios.mae`
+regBorrados=`grep -i -c '^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[^;]\+$' $MAEDIR/precios.mae`
 sed -i -n '/^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[^;]\+$/d' $MAEDIR/precios.mae
 
 $BINDIR/Logging Masterlist "Registros borrados: "$regBorrados INFO
@@ -150,11 +150,11 @@ if [ ! $cantArchProc -eq 0 ] ; then
 		superID=`echo "$registro" | cut -s -f1 -d';'`
 
 		#analizo si es alta o reemplazo
-		registro=`grep  -i '^'"$superID"';'"$usuario"';[0-9]\{8\};[^;]\+;[0-9]\+$' $MAEDIR/precios.mae | head -n1 `
+		registro=`grep  -i '^'"$superID"';'"$usuario"';[0-9]\{8\};[^;]\+;[^;]\+$' $MAEDIR/precios.mae | head -n1 `
 	
-		anioViejo=`echo "$registro" | sed s-'^[^;]\+;[^;]\+;\([0-9]\{4\}\)[0-9]\{4\};[^;]\+;[0-9]\+$-\1-'`
-		mesViejo=`echo "$registro" | sed s-'^[^;]\+;[^;]\+;[0-9]\{4\}\([0-9]\{2\}\)[0-9]\{2\};[^;]\+;[0-9]\+$-\1-'`
-		diaViejo=`echo "$registro" | sed s-'^[^;]\+;[^;]\+;[0-9]\{6\}\([0-9]\{2\}\);[^;]\+;[0-9]\+$-\1-'`
+		anioViejo=`echo "$registro" | sed s-'^[^;]\+;[^;]\+;\([0-9]\{4\}\)[0-9]\{4\};[^;]\+;[^;]\+$-\1-'`
+		mesViejo=`echo "$registro" | sed s-'^[^;]\+;[^;]\+;[0-9]\{4\}\([0-9]\{2\}\)[0-9]\{2\};[^;]\+;[^;]\+$-\1-'`
+		diaViejo=`echo "$registro" | sed s-'^[^;]\+;[^;]\+;[0-9]\{6\}\([0-9]\{2\}\);[^;]\+;[^;]\+$-\1-'`
 
 		anioNuevo=`echo "$nombre" | sed s-'^.*\-\([0-9]\{4\}\)[0-9]\{4\}\.[^-]*$-\1-'`
 		mesNuevo=`echo "$nombre" | sed s-'^.*\-[0-9]\{4\}\([0-9]\{2\}\)[0-9]\{2\}\.[^-]*$-\1-'`
