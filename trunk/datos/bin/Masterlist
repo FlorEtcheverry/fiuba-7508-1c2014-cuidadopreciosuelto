@@ -15,19 +15,19 @@ do
 		continue
 		#es cabecera o en blanco
 	fi
-
+#$arch $superID $usuario $fechaAUX $cantCampos $ubicProd $ubicPrecio
 	superID=$2
 	usuario=$3
-	fecha=$4$5$6
+	fecha=$4
 
 	cantCampos=`echo $linea|sed 's/[^;]//g'|wc -m`
-	if [ $cantCampos -ne $7 ] ; then
+	if [ $cantCampos -ne $5 ] ; then
 		let regNOK=regNOK+1
 		continue
 	fi
 
-	prod=`echo "$linea" | cut -s -f"$8" -d';'`
-	precio=`echo "$linea" | cut -s -f"$9" -d';'`
+	prod=`echo "$linea" | cut -s -f"$6" -d';'`
+	precio=`echo "$linea" | cut -s -f"$7" -d';'`
 
 	if [ "$prod" = "" ] || [ "$precio" = "" ] || [[ "$prod" =~ ^\ *$ ]] || [[ "$precio" =~ ^\ *$ ]] ; then
 		let regNOK=regNOK+1
@@ -36,11 +36,11 @@ do
 
 	let regOK=regOK+1
 
-	echo "$superID;$usuario;$fecha;$prod;$precio" >> ./$MAEDIR/precios.mae
+	echo "$superID;$usuario;$fecha;$prod;$precio" >> $MAEDIR/precios.mae
 done < "$arch"
 
-./Logging Masterlist "Registros OK: "$regOK INFO
-./Logging Masterlist "Registros NOK: "$regNOK INFO
+$BINDIR/Logging Masterlist "Registros OK: "$regOK INFO
+$BINDIR/Logging Masterlist "Registros NOK: "$regNOK INFO
 
 return 0
 
@@ -53,13 +53,18 @@ arch=$1
 
 #borro todos los que voy a reemplazar
 
-regBorrados=grep -c '^'"$superID"';'"$usuario"';'"$4$5$6"';[^;]\+;[0-9]\+$' ./$MAEDIR/precios.mae
-sed -i '/^'"$superID"';'"$usuario"';'"$4$5$6"';[^;]\+;[0-9]\+$/d' ./$MAEDIR/precios.mae
+regBorrados=`grep -i -c '^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[0-9]\+$' $MAEDIR/precios.mae`
+sed -i -n '/^'"$superID"';'"$usuario"';'"$8"';[^;]\+;[^;]\+$/d' $MAEDIR/precios.mae
 
-./Logging Masterlist "Registros borrados: "$regBorrados INFO
+$BINDIR/Logging Masterlist "Registros borrados: "$regBorrados INFO
 
 #llamo a alta
-alta $1 $2 $3 $4 $5 $6 $7 $8 $9
+
+# $arch $superID $usuario $fechaAUX $cantCampos $ubicProd $ubicPrecio $fechaAUXVieja
+#$arch $superID $usuario $fechaAUX $cantCampos $ubicProd $ubicPrecio
+
+
+alta $1 $2 $3 $4 $5 $6 $7
 
 return 0
 
@@ -68,27 +73,27 @@ return 0
 
 
 
-./Logging Masterlist "Inicio de Masterlist" INFO
+$BINDIR/Logging Masterlist "Inicio de Masterlist" INFO
 
 shopt -s nullglob
 
-archPrecios=($MAEDIR/precios/*.txt)
+archPrecios=($MAEDIR/precios/*.*)
 cantArchProc=${#archPrecios[@]}
-./Logging Masterlist "Cantidad de listas a procesar: $cantArchProc" INFO
+$BINDIR/Logging Masterlist "Cantidad de listas a procesar: $cantArchProc" INFO
 
 shopt -u nullglob
 
 if [ ! $cantArchProc -eq 0 ] ; then
 
-	for arch in $MAEDIR/precios/*.txt
+	for arch in $MAEDIR/precios/*.*
 	do
 		nombre=`basename "$arch"`
-		./Logging Masterlist "Archivo a procesar: $nombre" INFO
+		$BINDIR/Logging Masterlist "Archivo a procesar: $nombre" INFO
 
 		#verifico que no este duplicado
 		if [ -f $MAEDIR/precios/proc/"$nombre" ] ; then
-			./Mover $arch $RECHDIR Masterlist
-			./Logging Masterlist "Se rechaza archivo por estar DUPLICADO" INFO
+			$BINDIR/Mover $arch $RECHDIR Masterlist
+			$BINDIR/Logging Masterlist "Se rechaza archivo por estar DUPLICADO" INFO
 			continue
 		fi
 
@@ -103,37 +108,37 @@ if [ ! $cantArchProc -eq 0 ] ; then
 		ubicPrecio=`echo $cabecera | cut -s -f5 -d';'`
 		email=`echo $cabecera | cut -s -f6 -d';'`
 
-		if ! grep -q '^[^;]\+;'"$prov"';'"$nombreSuper"';[0-9]*;[^;]*;[^;]\+$' $MAEDIR/super.mae ; then
-			./Mover $arch $RECHDIR Masterlist
-			./Logging Masterlist "Se rechaza archivo por Supermercado inexistente" INFO
+		if ! grep -q -i '^[^;]\+;'"$prov"';'"$nombreSuper"';[^;]*;[^;]*;[^;]\+$' $MAEDIR/super.mae ; then
+			$BINDIR/Mover $arch $RECHDIR Masterlist
+			$BINDIR/Logging Masterlist "Se rechaza archivo por Supermercado inexistente" INFO
 			continue
 		fi
 
 		if [ "$cantCampos" -lt 1 ] ; then
-			./Mover $arch $RECHDIR Masterlist
-			./Logging Masterlist "Se rechaza archivo por cantidad de campos invalida" INFO
+			$BINDIR/Mover $arch $RECHDIR Masterlist
+			$BINDIR/Logging Masterlist "Se rechaza archivo por cantidad de campos invalida" INFO
 			continue
 		fi
 
 		re='^[0-9]+$'
 
 		if ! [[ $ubicProd =~ $re ]] || [ "$ubicProd" -eq "$ubicPrecio" ] || [ "$ubicProd" -lt 0 ] ; then
-			./Mover $arch $RECHDIR Masterlist
-			./Logging Masterlist "Se rechaza archivo por ubicacion producto invalida" INFO
+			$BINDIR/Mover $arch $RECHDIR Masterlist
+			$BINDIR/Logging Masterlist "Se rechaza archivo por ubicacion producto invalida" INFO
 			continue
 		fi
 
 		if ! [[ $ubicPrecio =~ $re ]] || [ "$ubicProd" -eq "$ubicPrecio" ] || [ "$ubicPrecio" -lt 0 ] ; then
-			./Mover $arch $RECHDIR Masterlist
-			./Logging Masterlist "Se rechaza archivo por ubicacion precio invalida" INFO
+			$BINDIR/Mover $arch $RECHDIR Masterlist
+			$BINDIR/Logging Masterlist "Se rechaza archivo por ubicacion precio invalida" INFO
 			continue
 		fi
 
-		usuario=`echo "$nombre" | sed s-'^[^\.]*\.[0-9]\{8\}\.\([^-]*\)\.txt$-\1-'`
-	
-		if ! grep -q '^[^;]*;[^;]*;'$usuario';1;'"$email"'$' $MAEDIR/asociados.mae ; then
-			./Mover $arch $RECHDIR Masterlist
-			./Logging Masterlist "Se rechaza archivo por correo electronico invalido" INFO
+		usuario=`echo "$nombre" | sed s-'^[^\-]*\-[0-9]\+\.\([^-]*\)$-\1-'`
+			
+		if ! grep -q -i '^[^;]*;[^;]*;'$usuario';1;'"$email"'$' $MAEDIR/asociados.mae ; then
+			$BINDIR/Mover $arch $RECHDIR Masterlist
+			$BINDIR/Logging Masterlist "Se rechaza archivo por correo electronico invalido" INFO
 			continue
 		fi
 
@@ -141,44 +146,47 @@ if [ ! $cantArchProc -eq 0 ] ; then
 	
 		#me quedo registro de la tabla de supermercados
 		# y obtengo el id del super
-		registro=`grep '^[^;]\+;'"$prov"';'"$nombreSuper"';[0-9]*;[^;]*;[^;]\+$' $MAEDIR/super.mae`
+		registro=`grep -i '^[^;]\+;'"$prov"';'"$nombreSuper"';[0-9]*;[^;]*;[^;]\+$' $MAEDIR/super.mae`
 		superID=`echo "$registro" | cut -s -f1 -d';'`
 
 		#analizo si es alta o reemplazo
-		registro=`grep '^'"$superID"';'"$usuario"';[0-9]\{8\};[^;]\+;[0-9]\+$' $MAEDIR/precios.mae | head -n1 `
+		registro=`grep  -i '^'"$superID"';'"$usuario"';[0-9]\{8\};[^;]\+;[0-9]\+$' $MAEDIR/precios.mae | head -n1 `
 	
 		anioViejo=`echo "$registro" | sed s-'^[^;]\+;[^;]\+;\([0-9]\{4\}\)[0-9]\{4\};[^;]\+;[0-9]\+$-\1-'`
 		mesViejo=`echo "$registro" | sed s-'^[^;]\+;[^;]\+;[0-9]\{4\}\([0-9]\{2\}\)[0-9]\{2\};[^;]\+;[0-9]\+$-\1-'`
 		diaViejo=`echo "$registro" | sed s-'^[^;]\+;[^;]\+;[0-9]\{6\}\([0-9]\{2\}\);[^;]\+;[0-9]\+$-\1-'`
 
-		anioNuevo=`echo "$nombre" | sed s-'^.*\.\([0-9]\{4\}\)[0-9]\{4\}\.[^-]*\.txt$-\1-'`
-		mesNuevo=`echo "$nombre" | sed s-'^.*\.[0-9]\{4\}\([0-9]\{2\}\)[0-9]\{2\}\.[^-]*\.txt$-\1-'`
-		diaNuevo=`echo "$nombre" | sed s-'^.*\.[0-9]\{6\}\([0-9]\{2\}\)\.[^-]*\.txt$-\1-'`
+		anioNuevo=`echo "$nombre" | sed s-'^.*\.\([0-9]\{4\}\)[0-9]\{4\}\.[^-]*$-\1-'`
+		mesNuevo=`echo "$nombre" | sed s-'^.*\.[0-9]\{4\}\([0-9]\{2\}\)[0-9]\{2\}\.[^-]*$-\1-'`
+		diaNuevo=`echo "$nombre" | sed s-'^.*\.[0-9]\{6\}\([0-9]\{2\}\)\.[^-]*$-\1-'`
+
+		fechaAUX=$anioNuevo$mesNuevo$diaNuevo
+		fechaAUXVieja=$anioViejo$mesViejo$diaViejo
 
 		if [ -z "$registro" ] || [ "$registro" = "" ] ; then
 			#PROCESAR ALTA
-			alta $arch $superID $usuario $anioNuevo $mesNuevo $diaNuevo $cantCampos $ubicProd $ubicPrecio
-			./Mover $arch $MAEDIR/precios/proc
+			alta $arch $superID $usuario $fechaAUX $cantCampos $ubicProd $ubicPrecio
+			$BINDIR/Mover $arch $MAEDIR/precios/proc
 			continue
 		fi
 
 		if [ "$anioNuevo" -gt "$anioViejo" ] ; then
 			#PROCESAR REEMPLAZO
-			reemplazo $arch $superID $usuario $anioNuevo $mesNuevo $diaNuevo $cantCampos $ubicProd $ubicPrecio
-			./Mover $arch $MAEDIR/precios/proc
+			reemplazo $arch $superID $usuario $fechaAUX $cantCampos $ubicProd $ubicPrecio $fechaAUXVieja
+			$BINDIR/Mover $arch $MAEDIR/precios/proc
 		elif [ "$anioNuevo" -eq "$anioViejo" ] && [ "$mesNuevo" -gt "$mesViejo" ] ; then
 			#PROCESAR REEMPLAZO
-			reemplazo $arch $superID $usuario $anioNuevo $mesNuevo $diaNuevo $cantCampos $ubicProd $ubicPrecio
-			./Mover $arch $MAEDIR/precios/proc
+			reemplazo $arch $superID $usuario $fechaAUX $cantCampos $ubicProd $ubicPrecio $fechaAUXVieja
+			$BINDIR/Mover $arch $MAEDIR/precios/proc
 		elif [ "$anioNuevo" -eq "$anioViejo" ] && [ "$mesNuevo" -eq "$mesViejo" ] && [ "$diaNuevo" -gt "$diaViejo" ] ; then
 			#PROCESAR REEMPLAZO
-			reemplazo $arch $superID $usuario $anioNuevo $mesNuevo $diaNuevo $cantCampos $ubicProd $ubicPrecio
-			./Mover $arch $MAEDIR/precios/proc
+			reemplazo $arch $superID $usuario $fechaAUX $cantCampos $ubicProd $ubicPrecio $fechaAUXVieja
+			$BINDIR/Mover $arch $MAEDIR/precios/proc
 		else
 			#HIPOTESIS: ANTE FECHAS IGUALES SE DESCARTA
 			#DESCARTAR
-			./Mover $arch $RECHDIR Masterlist
-			./Logging Masterlist "Se rechaza archivo por fecha anterior o igual a la existente" INFO
+			$BINDIR/Mover $arch $RECHDIR Masterlist
+			$BINDIR/Logging Masterlist "Se rechaza archivo por fecha anterior o igual a la existente" INFO
 			continue
 		fi
 
@@ -186,7 +194,7 @@ if [ ! $cantArchProc -eq 0 ] ; then
 
 fi
 
-./Logging Masterlist "Fin de Masterlist" INFO
+$BINDIR/Logging Masterlist "Fin de Masterlist" INFO
 
 
 

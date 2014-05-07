@@ -18,13 +18,14 @@ fi
 
 #me fijo que el comando no se este ejecutando
 #me fijo que no sea el comando grep ni este
-pid=`ps -ef | grep $comando | grep -e grep -e Start -v`
+pid=`ps | grep $comando | grep -e grep -e Start -v`
 pid=`echo $pid | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
 
 if [ "$pid" != "" ]
 then
-	echo El proceso ya se encuentra ejecutado
+	echo "El comando se encuentra en ejecucion como: `ps | grep $comando | grep -v -i -e grep -e start`"
+	echo El proceso ya se encuentra en ejecucion
 	exit 3
 fi
 
-./$comando&
+$BINDIR/$comando&

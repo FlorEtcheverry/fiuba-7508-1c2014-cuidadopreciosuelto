@@ -1,16 +1,16 @@
 #!/bin/bash
 
-./Logging Rating "Inicio de Rating" INFO
+$BINDIR/Logging Rating "Inicio de Rating" INFO
 
 if ! [ -d $ACEPDIR ]
 then
-	./Logging Rating "No existe el directorio origen" ERR
+	$BINDIR/Logging Rating "No existe el directorio origen" ERR
 	exit 1
 fi
 
 if ! [ -d $INFODIR ]
 then
-	./Logging Rating "No existe el directorio destino" ERR
+	$BINDIR/Logging Rating "No existe el directorio destino" ERR
 	exit 2
 fi
 
@@ -28,11 +28,11 @@ shopt -u nullglob
 archPecios=$MAEDIR/precios.mae
 archUnidades=$MAEDIR/um.tab
 
-./Logging Rating "Cantidad de listas de compras a procesar: $cantArchCompras" INFO
+$BINDIR/Logging Rating "Cantidad de listas de compras a procesar: $cantArchCompras" INFO
 
 if [ $cantArchCompras -eq 0 ]
 then
-	./Logging Rating "No hay archivos de compras a procesar. Fin de Rating" INFO
+	$BINDIR/Logging Rating "No hay archivos de compras a procesar. Fin de Rating" INFO
 	exit 0
 fi
 
@@ -42,8 +42,7 @@ lineasnocumplen=`grep -v '^[^;]*;[^;]*;[0-9]\{4\}[0-1][0-9][0-3][0-9];[^;]*;[0-9
 #si esta vacio es valido
 if ! [[ "$lineasnocumplen" == '' ]]
 then 
-	echo $lineasnocumplen
-	./Logging Rating "Se cancela por archivo maestro de precios invalido." ERR
+	$BINDIR/Logging Rating "Se cancela por archivo maestro de precios invalido." ERR
 	exit 3
 fi
 
@@ -51,12 +50,12 @@ fi
 for arch in $ACEPDIR/*.[!-][!-][!-]
 do
 	nombre=${arch##*/} #saca hasta la ultima / (obtiene el nombre del arch con su extension)
-	./Logging Rating "Archivo a procesar: $nombre" INFO
+	$BINDIR/Logging Rating "Archivo a procesar: $nombre" INFO
 
 	#verifico que no este duplicado
 	if [ -f $ACEPDIR/proc/"$nombre" ] ; then
-		./Mover $arch $RECHDIR Rating
-		./Logging Rating "Se rechaza archivo $nombre por estar DUPLICADO" INFO
+		$BINDIR/Mover $arch $RECHDIR Rating
+		$BINDIR/Logging Rating "Se rechaza archivo $nombre por estar DUPLICADO" INFO
 		continue
 	fi
 
@@ -64,8 +63,8 @@ do
 	
 	if ! [[ -s $arch ]]
 	then
-		./Mover $arch $RECHDIR Rating
-		./Logging Rating "Se rechaza archivo $nombre por estar vacio" INFO
+		$BINDIR/Mover $arch $RECHDIR Rating
+		$BINDIR/Logging Rating "Se rechaza archivo $nombre por estar vacio" INFO
 		continue
 	fi
 
@@ -75,8 +74,8 @@ do
 	if [ "$lineasnocumplen" -ne '0' ]
 	then 
 		
-		./Mover $arch $RECHDIR Rating
-		./Logging Rating "Se rechaza archivo $nombre por tener formato de campos invalido" INFO
+		$BINDIR/Mover $arch $RECHDIR Rating
+		$BINDIR/Logging Rating "Se rechaza archivo $nombre por tener formato de campos invalido" INFO
 		continue
 	fi
 
@@ -129,6 +128,6 @@ do
 	done <$arch
 
 	#mover a /proc
-	./Mover $arch $ACEPDIR/proc/$nombre
+	$BINDIR/Mover $arch $ACEPDIR/proc/$nombre
 done
-./Logging Rating "Fin de Rating" INFO
+$BINDIR/Logging Rating "Fin de Rating" INFO

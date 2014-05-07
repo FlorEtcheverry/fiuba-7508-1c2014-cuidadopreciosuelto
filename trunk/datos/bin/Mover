@@ -8,14 +8,14 @@ destino=$2
 #me fijo si existe el origen
 if ! [ -f $origen ]
 then 
-	./Logging Mover "se esta intentando mover un archivo inexistente: $origen" ERR
+	$BINDIR/Logging Mover "se esta intentando mover un archivo inexistente: $origen" ERR
 	exit 1
 fi
 
 #me fijo si existe el directorio destino
 if ! [ -d ${destino%/*} ]
 then 
-	./Logging Mover "se esta intentando mover hacia un directorio inexistente: ${destino%/*}" ERR
+	$BINDIR/Logging Mover "se esta intentando mover hacia un directorio inexistente: ${destino%/*}" ERR
 	exit 2
 fi
 
@@ -35,7 +35,7 @@ if [ $# -lt 3 ];then invocador="SOMEONE";else invocador=$3; fi
 #me fijo si son iguales
 if [ $origen = $destino ]
 then
-	./Logging Mover "se esta intentando mover un archivo a su misma posicion: $origen" WAR
+	$BINDIR/Logging Mover "se esta intentando mover un archivo a su misma posicion: $origen" WAR
 	exit 0
 fi
 
@@ -51,7 +51,7 @@ then
 	then 
 		#si no esta lo muevo
 		mv "$origen" "$base_destino"
-		./Logging Mover "ya existia el archivo destino, guardo $origen en: $base_destino" INFO
+		$BINDIR/Logging Mover "ya existia el archivo destino, guardo $origen en: $base_destino" INFO
 	else 
 		#si ya esta busco una extension que le pueda poner y lo muevo
 		contador=1
@@ -60,13 +60,13 @@ then
 			let contador=contador+1
 		done
 		mv "$origen" "$base_destino.$contador"
-		./Logging Mover "ya existia el archivo destino, guardo $origen en: $base_destino.$contador" INFO
+		$BINDIR/Logging Mover "ya existia el archivo destino, guardo $origen en: $base_destino.$contador" INFO
 	fi
 
 #si no existia lo muevo y listo
 else
 	mv "$origen" "$destino"
-	./Logging Mover "archivo $origen movido exitosamente" INFO
+	$BINDIR/Logging Mover "archivo $origen movido exitosamente" INFO
 fi
 
 exit 0
