@@ -56,10 +56,6 @@ sub getArchivo{
 	my ($comando) = @_;
 	if ($comando eq "Installer"){
 		return("./conf/Installer.log");
-	}
-	if ($ENV{INIT} eq ''){
-		print "No se realizo la inicializacion correspondiente\n";
-		exit;
 	}	
 	return("$ENV{LOGDIR}/$comando.$ENV{LOGEXT}");
 }

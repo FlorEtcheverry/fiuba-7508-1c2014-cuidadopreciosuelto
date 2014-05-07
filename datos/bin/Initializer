@@ -180,7 +180,6 @@ fi
 export LOGDIR
 export LOGEXT
 export LOGSIZE
-export INIT=true
 
 #inicializo el archivo de log del Initializer
 $BINDIR/Logging Initializer "Comando Initializer inicio de ejecucion" INFO
@@ -288,6 +287,7 @@ else
 	export ACEPDIR
 	export NOVEDIR
 	export RECHDIR
+	export INIT=true
 
 	mkdir -p "$BINDIR"
 	mkdir -p "$MAEDIR/precios/proc"
