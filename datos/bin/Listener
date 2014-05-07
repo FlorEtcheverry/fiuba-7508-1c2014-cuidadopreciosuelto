@@ -20,7 +20,7 @@ $BINDIR/Logging Listener "Cantidad de archivos de novedades: $cantArchProc" INFO
 
 shopt -u nullglob
 
-if [ cantArchProc != 0 ] ; then
+if [ $cantArchProc != 0 ] ; then
 
 	#Chequeo el formato
 	t_compras=1
@@ -119,13 +119,10 @@ fi
 
 #lanzo rating o masterlist si es necesario
 
-ratingCorriendo=0
-masterlistCorriendo=0
-
 shopt -s nullglob
 
 files=($MAEDIR/precios/*.*)
-if [ ${#files[@]} > 0 ] ; then
+if [ "${#files[@]}" != "0" ] ; then
 
 	pidRat=`ps -ef | grep Rating | grep -e grep -e Listener -v`
 	pidRat=`echo $pidRat | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
@@ -145,8 +142,10 @@ if [ ${#files[@]} > 0 ] ; then
 	fi
 fi
 
-ratingCorriendo=0
-masterlistCorriendo=0
+pid=`ps | grep  "Masterlist" | grep -e grep -v`
+pid=`echo $pid | sed 's-^\([^\ ]\+\)\ .*$-\1-g'` 
+
+if [ "$pid" == '' ]; then 
 
 files=($ACEPDIR/*.???)
 if [ ${#files[@]} -gt 0 ] ; then
@@ -167,6 +166,8 @@ if [ ${#files[@]} -gt 0 ] ; then
 			$BINDIR/Logging Listener "No se pudo lanzar Rating" WAR
 		fi
 	fi
+fi
+
 fi
 
 shopt -u nullglob
