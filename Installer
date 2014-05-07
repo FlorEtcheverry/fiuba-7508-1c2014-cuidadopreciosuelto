@@ -648,7 +648,7 @@ else
 		INFODIR="$GRUPO01/informes"
 		RECHDIR="$GRUPO01/rechazados"
 		LOGDIR="$GRUPO01/log"
-		LOGEXT=".log"
+		LOGEXT="log"
 		LOGSIZE=400
 
 		while [ $instalar -eq 0 ]
