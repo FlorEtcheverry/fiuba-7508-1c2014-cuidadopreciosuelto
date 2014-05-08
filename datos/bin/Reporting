@@ -695,10 +695,11 @@ sub MostrarMenuDR_DondeComprarYReferenciaArch
                         }
 
                         my $observ="";
-
+						chomp(%hashPrecios);
+						chomp(%hashPreciosCuidados);
                         if ( $cambioLugar ){
                         #recorro hashLugares por claves, si encuentro un value coincidente uso la clave para hash precios e imprimo ; luego elimino ese producto de ambos hashes
-                                foreach $clave (keys %hashPrecios){
+                                foreach $clave (sort { $hashNumItem{$a} <=> $hashNumItem{$b} } keys %hashPrecios){
 
                                         if ( $hashLugares{$clave} eq $Super_ID ) {
                                                 if ( $hashPrecios{$clave} > $hashPreciosCuidados{$clave} )
@@ -709,7 +710,7 @@ sub MostrarMenuDR_DondeComprarYReferenciaArch
                                                         { $observ="***" ;}
 
 #NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
-										chomp(%hashPrecios);
+										
                                         print SALIDA "$_[2]{$Super_ID} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \|$hashPrecios{$clave}\| $hashPreciosCuidados{$clave} \| $observ \n";
 						$escribi="true";
                                         #necesarios si no ordeno el archivo por lugares
@@ -825,8 +826,10 @@ sub MostrarMenuDR_DondeComprarYReferenciaPantalla
                         my $observ="";
 
                         if ( $cambioLugar ){
+						chomp(%hashPrecios);
+						chomp(%hashPreciosCuidados);
                         #recorro hashLugares por claves, si encuentro un value coincidente uso la clave para hash precios e imprimo ; luego elimino ese producto de ambos hashes
-                                foreach $clave (keys %hashPrecios){
+                                foreach $clave ( sort { $hashNumItem{$a} <=> $hashNumItem{$b} } keys %hashPrecios){
 
                                         if ( $hashLugares{$clave} eq $Super_ID ) {
                                                 if ( $hashPrecios{$clave} > $hashPreciosCuidados{$clave} )
@@ -837,7 +840,6 @@ sub MostrarMenuDR_DondeComprarYReferenciaPantalla
                                                         { $observ="***" ;}
 
 #NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
-										chomp(%hashPrecios);
                                         print "$_[2]{$Super_ID} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $hashPreciosCuidados{$clave} \| $observ \n";
 						$escribi="true";
                                         #necesarios si no ordeno el archivo por lugares
@@ -1135,13 +1137,13 @@ sub MostrarMenuDArchivo
                         my $observ="";
 
                         if ( $cambioLugar ){
+								chomp(%hashPrecios);
                         #recorro hashLugares por claves, si encuentro un value coincidente uso la clave para hash precios e imprimo ; luego elimino ese producto de ambos hashes
-                                foreach $clave (keys %hashPrecios){
+                                foreach $clave (sort { $hashNumItem{$a} <=> $hashNumItem{$b} } keys %hashPrecios){
 
                                         if ( $hashLugares{$clave} eq $Super_ID ) {
 
 #"NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA"   
-										chomp(%hashPrecios);
 										print SALIDA "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $_[2]{$Super_ID} \n";		$escribi="true";
                                         #necesarios si no ordeno el archivo por lugares
                                         delete($hashPrecios{$clave});
@@ -1244,15 +1246,16 @@ sub MostrarMenuDPantalla
                         }
 
                         my $observ="";
-
+						
+						chomp(%hashPrecios);
                         if ( $cambioLugar ){
                         #recorro hashLugares por claves, si encuentro un value coincidente uso la clave para hash precios e imprimo ; luego elimino ese producto de ambos hashes
-                                foreach $clave (keys %hashPrecios){
+                                foreach $clave (sort { $hashNumItem{$a} <=> $hashNumItem{$b} } keys %hashPrecios){
 
                                         if ( $hashLugares{$clave} eq $Super_ID ) {
 
 #"NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA"   
-										chomp(%hashPrecios);
+										
                                         print "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $_[2]{$Super_ID} \n";			$escribi="true";
                                         #necesarios si no ordeno el archivo por lugares
                                         delete($hashPrecios{$clave});
