@@ -64,7 +64,7 @@ while ($opcion ne "-exit")
 		$opcionF = <STDIN>;
                 chomp($opcionF);
 
-
+		$filtroUsuario="";
 		if ( $opcionF eq "y" ) {
 			$filtroUsuario = &mostrarYCargarMenuFiltroUsuario($pathLP);
 		}else
@@ -72,6 +72,7 @@ while ($opcion ne "-exit")
 			print "No se usara un filtro de usuarios.\n"
 		}	
 
+		$filtroSuper="";
 		if ( $opcion ne "-f"){
 		        print "3ra entrada:  [y/n] \n";
 			$opcionF = <STDIN>;
@@ -435,8 +436,9 @@ sub MostrarMenuM_MenorPrecioArchivo
                 
                 
                 #recorro hashes
+                chomp(%hashPrecios);
                 foreach $clave (keys %hashPrecios){
-					print SALIDA "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| ".chomp($hashPrecios{$clave})." \| $_[2]{$hashLugares{$clave}} \n";
+					print SALIDA "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $_[2]{$hashLugares{$clave}} \n";
                 }
 
                 close(LISTA);           
@@ -498,8 +500,9 @@ sub MostrarMenuM_MenorPrecioPantalla
                 }
 
                 #recorro hashes
+				chomp(%hashPrecios);
                 foreach $clave (keys %hashPrecios){
-                    print "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \|".chomp($hashPrecios{$clave})."\| $_[2]{$hashLugares{$clave}} \n";
+                    print "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \|$hashPrecios{$clave}\| $_[2]{$hashLugares{$clave}} \n";
                 }
 
                 close(LISTA);           
@@ -706,8 +709,8 @@ sub MostrarMenuDR_DondeComprarYReferenciaArch
                                                         { $observ="***" ;}
 
 #NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
-
-                                                print SALIDA "$_[2]{$Super_ID} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \|".chomp($hashPrecios{$clave})."\| $hashPreciosCuidados{$clave} \| $observ \n";
+										chomp(%hashPrecios);
+                                        print SALIDA "$_[2]{$Super_ID} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \|$hashPrecios{$clave}\| $hashPreciosCuidados{$clave} \| $observ \n";
 						$escribi="true";
                                         #necesarios si no ordeno el archivo por lugares
                                         delete($hashPrecios{$clave});
@@ -834,8 +837,8 @@ sub MostrarMenuDR_DondeComprarYReferenciaPantalla
                                                         { $observ="***" ;}
 
 #NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
-
-                                                print "$_[2]{$Super_ID} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| ".chomp($hashPrecios{$clave})." \| $hashPreciosCuidados{$clave} \| $observ \n";
+										chomp(%hashPrecios);
+                                        print "$_[2]{$Super_ID} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $hashPreciosCuidados{$clave} \| $observ \n";
 						$escribi="true";
                                         #necesarios si no ordeno el archivo por lugares
                                         delete($hashPrecios{$clave});
@@ -938,8 +941,8 @@ sub MostrarMenuMRArchivo
                                 { $observ="***" ;}
 
 #NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
-        		
-                        print SALIDA "$_[2]{$hashLugares{$clave}} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| ".chomp($hashPrecios{$clave})." \| $hashPreciosCuidados{$clave} \| $observ \n";
+						chomp(%hashPrecios);
+                        print SALIDA "$_[2]{$hashLugares{$clave}} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $hashPreciosCuidados{$clave} \| $observ \n";
                 }
 
                 close(LISTA);           
@@ -1027,8 +1030,8 @@ sub MostrarMenuMRPantalla
                                 { $observ="***" ;}
 
 #NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
-                        
-                        print "$_[2]{$hashLugares{$clave}} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| ".chomp($hashPrecios{$clave})." \| $hashPreciosCuidados{$clave} \| $observ \n";
+                        chomp(%hashPrecios);
+                        print "$_[2]{$hashLugares{$clave}} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $hashPreciosCuidados{$clave} \| $observ \n";
                 }
 
                 close(LISTA);           
@@ -1138,8 +1141,8 @@ sub MostrarMenuDArchivo
                                         if ( $hashLugares{$clave} eq $Super_ID ) {
 
 #"NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA"   
-
-                                                print SALIDA "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| ".chomp($hashPrecios{$clave})." \| $_[2]{$Super_ID} \n";		$escribi="true";
+										chomp(%hashPrecios);
+										print SALIDA "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $_[2]{$Super_ID} \n";		$escribi="true";
                                         #necesarios si no ordeno el archivo por lugares
                                         delete($hashPrecios{$clave});
                                         delete($hashPrecios{$clave});
@@ -1249,8 +1252,8 @@ sub MostrarMenuDPantalla
                                         if ( $hashLugares{$clave} eq $Super_ID ) {
 
 #"NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA"   
-
-                                                print "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| ".chomp($hashPrecios{$clave})." \| $_[2]{$Super_ID} \n";			$escribi="true";
+										chomp(%hashPrecios);
+                                        print "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $_[2]{$Super_ID} \n";			$escribi="true";
                                         #necesarios si no ordeno el archivo por lugares
                                         delete($hashPrecios{$clave});
                                         delete($hashPrecios{$clave});
