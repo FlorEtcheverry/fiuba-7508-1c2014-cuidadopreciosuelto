@@ -387,7 +387,7 @@ sub MostrarMenuM_MenorPrecioArchivo
 
         for ( my $i=0; $i<=$_[3]; $i++ ){
 
-        print SALIDA "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA --> $_[0][$i]\n";
+        print SALIDA "\nNRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA --> $_[0][$i]\n";
                 
                 open (LISTA, $_[0][$i]);
 
@@ -437,7 +437,7 @@ sub MostrarMenuM_MenorPrecioArchivo
                 
                 #recorro hashes
                 chomp(%hashPrecios);
-                foreach $clave (keys %hashPrecios){
+                foreach $clave ( sort { $hashNumItem{$a} <=> $hashNumItem{$b} } keys %hashPrecios){
 					print SALIDA "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $_[2]{$hashLugares{$clave}} \n";
                 }
 
@@ -452,7 +452,7 @@ sub MostrarMenuM_MenorPrecioPantalla
 {
         for ( my $i=0; $i<=$_[3]; $i++ ){
 
-        print "NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA --> $_[0][$i]\n";
+        print "\nNRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| NOMBRE_SUPER-PROVINCIA --> $_[0][$i]\n";
                 
                 open (LISTA, $_[0][$i]);
 
@@ -501,7 +501,7 @@ sub MostrarMenuM_MenorPrecioPantalla
 
                 #recorro hashes
 				chomp(%hashPrecios);
-                foreach $clave (keys %hashPrecios){
+                foreach $clave (sort { $hashNumItem{$a} <=> $hashNumItem{$b} } keys %hashPrecios){
                     print "$hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \|$hashPrecios{$clave}\| $_[2]{$hashLugares{$clave}} \n";
                 }
 
@@ -874,7 +874,7 @@ sub MostrarMenuMRArchivo
 
         for ( my $i=0; $i<=$_[3]; $i++ ){
 
-                print SALIDA "NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   --> $_[0][$i]\n";
+                print SALIDA "\n NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   --> $_[0][$i]\n";
         
                 open (LISTA, $_[0][$i]);
 
@@ -933,8 +933,9 @@ sub MostrarMenuMRArchivo
                 
                 #todavia estando en la misma lista de presupuestos
                 #recorro los hashes mostrando lo pedido
-
-                foreach $clave (keys %hashPrecios){
+				chomp(%hashPrecios);
+				chomp(%hashPreciosCuidados);
+                foreach $clave ( sort { $hashNumItem{$a} <=> $hashNumItem{$b} } keys %hashPrecios){
                         if ( $hashPrecios{$clave} > $hashPreciosCuidados{$clave} )
                                 { $observ="**" ;}
                         if ( $hashPrecios{$clave} <= $hashPreciosCuidados{$clave} )
@@ -943,7 +944,7 @@ sub MostrarMenuMRArchivo
                                 { $observ="***" ;}
 
 #NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
-						chomp(%hashPrecios);
+						
                         print SALIDA "$_[2]{$hashLugares{$clave}} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $hashPreciosCuidados{$clave} \| $observ \n";
                 }
 
@@ -963,7 +964,7 @@ sub MostrarMenuMRPantalla
 
         for ( my $i=0; $i<=$_[3]; $i++ ){
 
-                print "NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   --> $_[0][$i]\n";
+                print "\n NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   --> $_[0][$i]\n";
         
                 open (LISTA, $_[0][$i]);
 
@@ -1022,8 +1023,9 @@ sub MostrarMenuMRPantalla
                 
                 #todavia estando en la misma lista de presupuestos
                 #recorro los hashes mostrando lo pedido
-
-                foreach $clave (keys %hashPrecios){
+				chomp(%hashPrecios);
+				chomp(%hashPreciosCuidados);
+                foreach $clave ( sort { $hashNumItem{$a} <=> $hashNumItem{$b} } keys %hashPrecios){
                         if ( $hashPrecios{$clave} > $hashPreciosCuidados{$clave} )
                                 { $observ="**" ;}
                         if ( $hashPrecios{$clave} <= $hashPreciosCuidados{$clave} )
@@ -1032,7 +1034,6 @@ sub MostrarMenuMRPantalla
                                 { $observ="***" ;}
 
 #NOMBRE_SUPER-PROVINCIA \| NRO de ITEM \| PRODUCTO PEDIDO \| PRODUCTO ENCONTRADO \| PRECIO \| PRECIO de REFERENCIA \| Observaciones   
-                        chomp(%hashPrecios);
                         print "$_[2]{$hashLugares{$clave}} \| $hashNumItem{$clave} \| $clave \| $hashDescripcion{$clave} \| $hashPrecios{$clave} \| $hashPreciosCuidados{$clave} \| $observ \n";
                 }
 
