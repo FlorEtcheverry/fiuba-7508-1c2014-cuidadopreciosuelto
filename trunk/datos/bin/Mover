@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ "$INIT" != "true" ]
 then 
@@ -20,22 +20,37 @@ then
 	exit 1
 fi
 
-#me fijo si existe el directorio destino
-if ! [ -d ${destino%/*} ]
-then 
-	$BINDIR/Logging Mover "se esta intentando mover hacia un directorio inexistente: ${destino%/*}" ERR
-	exit 2
-fi
-
 #leo directorio el origen 
 cd ${1%/*}
 origen="`pwd`/${1##*/}"
 cd $directorio_ppal
 
-#leo el directorio destino
-cd ${2%/*}
-destino="`pwd`/${2##*/}"
-cd $directorio_ppal
+#si me dan el archivo destino
+if [[ `basename $destino` =~ .*\..* ]]
+then
+	#me fijo si existe el directorio destino
+	if ! [ -d ${destino%/*} ]
+	then 
+		$BINDIR/Logging Mover "se esta intentando mover hacia un directorio inexistente: ${destino%/*}" ERR
+		exit 2
+	fi
+	#leo el directorio destino
+	cd ${2%/*}
+	destino="`pwd`/${2##*/}"
+	cd $directorio_ppal
+else #si me dan la carpeta destino
+	#me fijo si existe el directorio destino
+	if ! [ -d ${destino} ]
+	then 
+		$BINDIR/Logging Mover "se esta intentando mover hacia un directorio inexistente: ${destino%/*}" ERR
+		exit 2
+	fi
+	#leo el directorio destino
+	cd $2
+	destino="`pwd`/${1##*/}"
+	cd $directorio_ppal
+fi
+
 
 #lee el tercer parametro si no fue dado le pongo cualquier valor
 if [ $# -lt 3 ];then invocador="SOMEONE";else invocador=$3; fi
@@ -74,7 +89,7 @@ then
 #si no existia lo muevo y listo
 else
 	mv "$origen" "$destino"
-	$BINDIR/Logging Mover "archivo $origen movido exitosamente" INFO
+	$BINDIR/Logging Mover "archivo $origen movido exitosamente  a $destino" INFO
 fi
 
 exit 0
