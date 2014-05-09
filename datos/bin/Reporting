@@ -210,8 +210,8 @@ sub mostrarYCargarMenuFiltroSuper
 	#recorrer hash
 	
 	print "Seleccione los super_provincia deseados de la siguiente lista: \n";
-	
-	foreach $key (keys $_[0]){
+	(%my_hash)=@_;
+	foreach $key (keys %hashSuper){
 		print "Supermercado posible: $_[0]{$key} \n";
 	}
 	
