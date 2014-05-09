@@ -600,6 +600,7 @@ then
 	#creo archivo de log
 	touch "$CONFDIR/Installer.log"
 fi	
+chmod +x ./datos/bin/
 echo "Log de la instalacion: $GRUPO01/$CONFDIR/Installer.log"
 ./datos/bin/Logging Installer "Log de la instalacion: $CONFDIR/Installer.log" INFO
 echo "Directorio predefinido de Configuracion: $CONFDIR"

@@ -25,6 +25,8 @@ PATHTP=`pwd`
 CONFDIR=$PATHTP/conf
 INIT="false"
 
+cd $DIRACTUAL
+
 #compruebo que exista el archivo conf
 if [ ! -f "$CONFDIR/Installer.conf" ]
 then
@@ -375,8 +377,9 @@ do
 
 			if [ "$pid" != "" ]
 			then
-				$BINDIR/Logging Initializer "El Listener ya se encuentra ejecutandose" WAR
-				return 0
+				#$BINDIR/Logging Initializer "El Listener ya se encuentra ejecutandose" WAR
+				#return 0
+				kill "$pid"
 			fi
 
 			$BINDIR/Logging Initializer "Se activa el listener" INFO

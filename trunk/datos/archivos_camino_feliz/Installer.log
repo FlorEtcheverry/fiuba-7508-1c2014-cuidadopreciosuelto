@@ -1,0 +1,37 @@
+8/5/2014 2014:14:58 javier Installer INFO Log de la instalacion: /home/javier/alumnos/grupo01/conf/Installer.log
+8/5/2014 2014:14:58 javier Installer INFO Directorio predefinido de Configuracion: /home/javier/alumnos/grupo01/conf
+8/5/2014 2014:14:59 javier Installer INFO TP SO7508 Primer Cuatrimestre 2014. Tema C Copyright © Grupo 01
+Perl Version: 
+This is perl 5, version 14, subversion 2 (v5.14.2) built for x86_64-linux-gnu-thread-multi
+(with 65 registered patches, see perl -V for more detail)
+
+Copyright 1987-2011, Larry Wall
+
+Perl may be copied only under the terms of either the Artistic License or the
+GNU General Public License, which may be found in the Perl 5 source kit.
+
+Complete documentation for Perl, including FAQ lists, should be found on
+this system using "man perl" or "perldoc perl".  If you have access to the
+Internet, point your browser at http://www.perl.org/, the Perl Home Page.
+8/5/2014 2014:15:0 javier Installer INFO Directorio de instalacion de los ejecutables (/home/javier/alumnos/grupo01/bin): /home/javier/alumnos/grupo01/bin
+8/5/2014 2014:15:0 javier Installer INFO Directorio para maestros y tablas (/home/javier/alumnos/grupo01/mae): /home/javier/alumnos/grupo01/mae
+8/5/2014 2014:15:0 javier Installer INFO Directorio de arribo de novedades (/home/javier/alumnos/grupo01/arribos): /home/javier/alumnos/grupo01/arribos
+8/5/2014 2014:15:0 javier Installer ERR Error: El número ingresado para DATASIZE es inválido, se tomará el predeterminado.
+8/5/2014 2014:15:0 javier Installer INFO Directorio de grabacion de las Novedades aceptadas (/home/javier/alumnos/grupo01/aceptadas): /home/javier/alumnos/grupo01/aceptadas
+8/5/2014 2014:15:0 javier Installer INFO Directorio de grabación de los informes de salida (/home/javier/alumnos/grupo01/informes): /home/javier/alumnos/grupo01/informes
+8/5/2014 2014:15:0 javier Installer INFO Directorio de grabación de Archivos rechazados (/home/javier/alumnos/grupo01/rechazados): /home/javier/alumnos/grupo01/rechazados
+8/5/2014 2014:15:0 javier Installer INFO Directorio de logs (/home/javier/alumnos/grupo01/log): /home/javier/alumnos/grupo01/log
+8/5/2014 2014:15:0 javier Installer INFO La extension para los archivos de log es: log
+8/5/2014 2014:15:0 javier Installer ERR Error: El número ingresado para LOGSIZE es inválido, se tomará el predeterminado.
+8/5/2014 2014:15:0 javier Installer INFO Direct. de Configuracion:  /home/javier/alumnos/grupo01/conf 
+Archivos en /home/javier/alumnos/grupo01/conf:
+Installer.log 
+8/5/2014 2014:15:0 javier Installer INFO Directorio Ejecutables:  /home/javier/alumnos/grupo01/bin
+8/5/2014 2014:15:0 javier Installer INFO Directorio Maestros y Tablas: /home/javier/alumnos/grupo01/mae
+8/5/2014 2014:15:0 javier Installer INFO Directorio de Novedades: /home/javier/alumnos/grupo01/arribos
+8/5/2014 2014:15:1 javier Installer INFO Espacio mínimo libre para arribos: 100 Mb
+8/5/2014 2014:15:1 javier Installer INFO Directiorio Novedades Aceptadas: /home/javier/alumnos/grupo01/aceptadas
+8/5/2014 2014:15:1 javier Installer INFO Directorio Informes de Salida: /home/javier/alumnos/grupo01/informes
+8/5/2014 2014:15:1 javier Installer INFO Directorio Archivos Rechazados: /home/javier/alumnos/grupo01/rechazados
+8/5/2014 2014:15:1 javier Installer INFO Iniciando Instalacion. Esta Ud. seguro? (Si-No): si
+8/5/2014 2014:15:1 javier Installer INFO Intalacion CONCLUIDA
