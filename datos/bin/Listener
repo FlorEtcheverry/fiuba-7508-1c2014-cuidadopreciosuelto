@@ -130,10 +130,10 @@ shopt -s nullglob
 files=($MAEDIR/precios/*.*)
 if [ "${#files[@]}" != "0" ] ; then
 
-	pidRat=`ps -ef | grep Rating | grep -e grep -e Listener -v`
-	pidRat=`echo $pidRat | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
-	pidMstLst=`ps -ef | grep Rating | grep -e grep -e Listener -v`
-	pidMstLst=`echo $pidMstLst | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
+	pidRat=`ps | grep  "Rating" | grep -e grep -v`
+	pidRat=`echo $pidRat | sed 's-^\([^\ ]\+\)\ .*$-\1-g'` 
+	pidMstLst=`ps | grep  "Masterlist" | grep -e grep -v`
+	pidMstLst=`echo $pidMstLst | sed 's-^\([^\ ]\+\)\ .*$-\1-g'` 
 
 	if [ "$pidRat" = "" ] && [ "$pidMstLst" = "" ] ; then
 		tmp=`$BINDIR/Start Masterlist`
@@ -148,18 +148,14 @@ if [ "${#files[@]}" != "0" ] ; then
 	fi
 fi
 
-pid=`ps | grep  "Masterlist" | grep -e grep -v`
-pid=`echo $pid | sed 's-^\([^\ ]\+\)\ .*$-\1-g'` 
-
-if [ "$pid" == '' ]; then 
 
 files=($ACEPDIR/*.???)
 if [ ${#files[@]} -gt 0 ] ; then
 
-	pidRat=`ps -ef | grep Rating | grep -e grep -e Listener -v`
-	pidRat=`echo $pidRat | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
-	pidMstLst=`ps -ef | grep Rating | grep -e grep -e Listener -v`
-	pidMstLst=`echo $pidMstLst | sed 's-^[^\ ]\+\ \([0-9]\+\)\ .*$-\1-g'` 
+	pidRat=`ps | grep  "Rating" | grep -e grep -v`
+	pidRat=`echo $pidRat | sed 's-^\([^\ ]\+\)\ .*$-\1-g'` 
+	pidMstLst=`ps | grep  "Masterlist" | grep -e grep -v`
+	pidMstLst=`echo $pidMstLst | sed 's-^\([^\ ]\+\)\ .*$-\1-g'` 
 
 	if [ "$pidRat" = "" ] && [ "$pidMstLst" = "" ] ; then
 		tmp=`$BINDIR/Start Rating`
@@ -172,8 +168,6 @@ if [ ${#files[@]} -gt 0 ] ; then
 			$BINDIR/Logging Listener "No se pudo lanzar Rating" WAR
 		fi
 	fi
-fi
-
 fi
 
 shopt -u nullglob
