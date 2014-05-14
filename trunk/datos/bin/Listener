@@ -20,7 +20,7 @@ $BINDIR/Logging Listener "Ciclo numero: $numLog" INFO
 #Chequeo que haya algo para procesar o pasan cosas feas
 shopt -s nullglob
 
-archNovedades=($NOVEDIR/*.*)
+archNovedades=($NOVEDIR/*)
 cantArchProc=${#archNovedades[@]}
 $BINDIR/Logging Listener "Cantidad de archivos de novedades: $cantArchProc" INFO
 
@@ -41,30 +41,43 @@ if [ $cantArchProc != 0 ] ; then
 
 		if [ "$t_compras" != 0 ] && [ "$t_precios" != 0 ] ; then
 			$BINDIR/Logging Listener "Archivo: $nombre rechazado por formato invalido" ERR
-			$BINDIR/Mover $arch $RECHDIR Listener
+				echo "$arch"
+
+			$BINDIR/Mover "$arch" "$RECHDIR" Listener
 			continue	
 			#formato
 		elif [ "$t_compras" = 0 ] ; then
 			usuario=`echo "$nombre" | sed s-'^\([^.]\+\)\.[^-\ ]\{3\}$-\1-'`
 		
 			existe=0
-			existe=`grep -c '^[^;]\+;[^;]\+;'$usuario';[01];\?[^;]*$' $MAEDIR/asociados.mae`
+			existe=`grep -c '^[^;]\+;[^;]\+;'"$usuario"';[01];\?[^;]*$' $MAEDIR/asociados.mae`
 			if [ "$existe" = 0 ] ; then
 				$BINDIR/Logging Listener "Archivo: $nombre rechazado porque usuario es inexistente" ERR
-				$BINDIR/Mover $arch $RECHDIR Listener	
+				$BINDIR/Mover "$arch" "$RECHDIR" Listener	
 				continue
 				#usuario no en campo de asociados
 			fi
 
 			#lo acepto
 			$BINDIR/Logging Listener "Archivo de lista de compras: $nombre aceptado" INFO
-			$BINDIR/Mover $arch $ACEPDIR Listener	
+			$BINDIR/Mover "$arch" "$ACEPDIR" Listener	
 
 		elif [ "$t_precios" = 0 ] ; then
 			anioIngr=`echo "$nombre" | sed s-'^.*\-\([0-9]\{4\}\)[0-9]\{4\}\.[^-]*$-\1-'`
 			mesIngr=`echo "$nombre" | sed s-'^.*\-[0-9]\{4\}\([0-9]\{2\}\)[0-9]\{2\}\.[^-]*$-\1-'`
 			diaIngr=`echo "$nombre" | sed s-'^.*\-[0-9]\{6\}\([0-9]\{2\}\)\.[^-]*$-\1-'`
-		
+
+			#chequeo validez de fecha
+			f="$anioIngr-$mesIngr-$diaIngr"
+			date --date="$f" > tmp~ 2>&1
+			invalida=`grep -c "inv" tmp~`
+			rm tmp~
+			if [ "$invalida" -gt "0" ]; then
+				$BINDIR/Logging Listener "Archivo: $nombre rechazado porque la fecha es falsa." ERR
+				$BINDIR/Mover "$arch" "$RECHDIR" Listener	
+				continue		
+			fi
+
 			anioAct=`date +%y`
 			let anioAct=2000+$anioAct
 
@@ -73,17 +86,17 @@ if [ $cantArchProc != 0 ] ; then
 
 			if [ "$anioIngr" -gt "$anioAct" ] ; then
 				$BINDIR/Logging Listener "Archivo: $nombre rechazado porque la fecha es invalida." ERR
-				$BINDIR/Mover $arch $RECHDIR Listener	
+				$BINDIR/Mover "$arch" "$RECHDIR" Listener	
 				continue		
 				#fecha invalida
 			elif [ "$anioIngr" -eq "$anioAct" ] && [ "$mesIngr" -gt "$mesAct" ] ; then
 				$BINDIR/Logging Listener "Archivo: $nombre rechazado porque la fecha es invalida." ERR
-				$BINDIR/Mover $arch $RECHDIR Listener
+				$BINDIR/Mover "$arch" "$RECHDIR" Listener
 				continue
 				#fecha invalida
 			elif [ "$anioIngr" -eq "$anioAct" ] && [ "$mesIngr" -eq "$mesAct"  ] && [ "$diaIngr" -gt "$diaAct" ] ; then
 				$BINDIR/Logging Listener "Archivo: $nombre rechazado porque la fecha es invalida." ERR
-				$BINDIR/Mover $arch $RECHDIR Listener		
+				$BINDIR/Mover "$arch" "$RECHDIR" Listener		
 				continue	
 				#fecha invalida
 			fi
@@ -91,7 +104,7 @@ if [ $cantArchProc != 0 ] ; then
 
 			if [ "$anioIngr" -lt 2014 ] ; then
 				$BINDIR/Logging Listener "Archivo: $nombre rechazado porque la fecha es invalida (Antes de inicio del sistema)" ERR
-				$BINDIR/Mover $arch $RECHDIR Listener
+				$BINDIR/Mover "$arch" "$RECHDIR" Listener
 				continue
 				#fecha invalida
 			fi
@@ -106,17 +119,17 @@ if [ $cantArchProc != 0 ] ; then
 				if [ "$esColab" -eq 1 ] ; then
 					break
 				fi 
-			done < <(grep '^[^;]\+;[^;]\+;'$usuario';[01];\?[^;]*$' $MAEDIR/asociados.mae)
+			done < <(grep '^[^;]\+;[^;]\+;'"$usuario"';[01];\?[^;]*$' $MAEDIR/asociados.mae)
 
 			if [ "$esColab" != 1 ] ; then
 				$BINDIR/Logging Listener "Archivo: $nombre rechazado porque colaborador es inexistente" ERR
-				$BINDIR/Mover $arch $RECHDIR Listener
+				$BINDIR/Mover "$arch" "$RECHDIR" Listener
 				continue	
 				#usuario no existe o no es colaborador
 			fi
 
 			$BINDIR/Logging Listener "Archivo de lista de precios: $nombre aceptado" INFO
-			$BINDIR/Mover $arch $MAEDIR/precios Listener	
+			$BINDIR/Mover "$arch" "$MAEDIR/precios" Listener	
 
 		fi
 	done
@@ -128,14 +141,16 @@ fi
 shopt -s nullglob
 
 files=($MAEDIR/precios/*.*)
-if [ "${#files[@]}" != "0" ] ; then
-
+if [ "${#files[@]}" != "0" -a "$files" != "$MAEDIR/precios/" ] ; then
+	echo ""
+	pidRat=""
 	pidRat=`ps | grep  "Rating" | grep -e grep -v`
 	pidRat=`echo $pidRat | sed 's-^\([^\ ]\+\)\ .*$-\1-g'` 
+	pidMstLst=""
 	pidMstLst=`ps | grep  "Masterlist" | grep -e grep -v`
 	pidMstLst=`echo $pidMstLst | sed 's-^\([^\ ]\+\)\ .*$-\1-g'` 
 
-	if [ "$pidRat" = "" ] && [ "$pidMstLst" = "" ] ; then
+	if [ -z "$pidRat" -a -z "$pidMstLst" ] ; then
 		tmp=`$BINDIR/Start Masterlist`
 		if [ $? = 0 ] ; then
 			pid=`ps -ef | grep  "Masterlist" | grep -e grep -v`
@@ -177,12 +192,3 @@ sleep 10
 done
 
 $BINDIR/Logging Listener "Fin de Listener" INFO
-
-
-
-
-
-
-
-
-

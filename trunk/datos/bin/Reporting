@@ -631,7 +631,7 @@ sub MostrarMenuDR_DondeComprarYReferenciaArch
 					#si el super-prov de la linea encaja en el filtro lo imprimo
 								$posProv=index($_[1],$Super_provLinea);
 
-			if ( (((("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )){
+			if ( (("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )  or ($arrayLineaProducto[2] < 100) ){
 
                         #Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
                         #si lo es guardo el menor de los precios cuidados y saltear.
@@ -762,7 +762,7 @@ sub MostrarMenuDR_DondeComprarYReferenciaPantalla
 					#si el super-prov de la linea encaja en el filtro lo imprimo
 								$posProv=index($_[1],$Super_provLinea);
 
-			if ( (((("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )){
+			if ( (("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )  or ($arrayLineaProducto[2] < 100) ){
 
                         #Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
                         #si lo es guardo el menor de los precios cuidados y saltear.
@@ -896,7 +896,7 @@ sub MostrarMenuMRArchivo
 					#si el super-prov de la linea encaja en el filtro lo imprimo
 								$posProv=index($_[1],$Super_provLinea);
 
-			if ( (((("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )){
+			if ( (("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" ) or ($arrayLineaProducto[2] < 100) ){
 
                         #Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
                         #si lo es guardo el menor de los precios cuidados y saltear.
@@ -986,7 +986,7 @@ sub MostrarMenuMRPantalla
 					#si el super-prov de la linea encaja en el filtro lo imprimo
 								$posProv=index($_[1],$Super_provLinea);
 
-			if ( (((("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )) and ( "$Super_provLinea" ne "" )){
+			if ( (("$posProv" >= 0) or ("$_[1]" eq "")) and ( "$Super_provLinea" ne "" )  or ($arrayLineaProducto[2] < 100) ){
 
                         #Me fijo si es de precios cuidados, entonces SUPER ID debe ser menor a 100
                         #si lo es guardo el menor de los precios cuidados y saltear.
@@ -1271,4 +1271,3 @@ sub MostrarMenuDPantalla
         }
 
 }
-
