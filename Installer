@@ -1,9 +1,31 @@
 #!/bin/bash
 #declaraciones
-export GRUPO01=`pwd`
+export GRUPO01="`pwd`"
 export CONFDIR="$GRUPO01/conf"
 
 clear
+
+#instalo archivos
+function Instalacion_archivos {
+	echo "Instalando Archivos Maestros y tablas"
+	Copiar_archivos "$GRUPO01/datos" "asociados.mae" "$MAEDIR"
+	Copiar_archivos "$GRUPO01/datos" "super.mae" "$MAEDIR"
+	Copiar_archivos "$GRUPO01/datos" "um.tab" "$MAEDIR"
+	echo
+	echo "Instalando Programas y Funciones"
+#	Copiar_archivos "$GRUPO01/datos" "*.sh" "$GRUPO01"/"$BINDIR"
+#	Copiar_archivos "$GRUPO01/datos" "*.pl" "$GRUPO01"/"$BINDIR"	
+
+	Copiar_archivos "$GRUPO01/datos/bin" "Start" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Stop" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Mover" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Rating" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Reporting" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Logging" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Listener" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Masterlist" "$BINDIR"
+	Copiar_archivos "$GRUPO01/datos/bin" "Initializer" "$BINDIR"
+}
 
 #funciona verificacion
 function Pregunta_SiNo {
@@ -140,7 +162,7 @@ function Obtener_numero {
 		return 0
 	fi
 
-	if [ $Resultadoparcial -lt $5 ]
+	if [ "$Resultadoparcial" -lt "$5" ]
 	then
 		Resultadoparcial=$4
 	fi
@@ -242,8 +264,8 @@ function Creacion_de_directorios {
 function Copiar_archivos {
 	declare local directorioActual=`pwd`
 	cd "$1"
-	ListaArchivos=`ls $1/$2`
-	for Archivo in $ListaArchivos;
+	ListaArchivos=`ls "$1"/$2`
+	for Archivo in "$ListaArchivos";
 	do
 		echo "archivo $Archivo"
 		local Nombre_archivo=`echo $Archivo | sed -n 's/.*[/]\([^/]*\)/\1/p'`
@@ -254,31 +276,12 @@ function Copiar_archivos {
 	cd "$directorioActual"
 }
 
-#instalo archivos
-function Instalacion_archivos {
-	echo "Instalando Archivos Maestros y tablas"
-	Copiar_archivos "$GRUPO01/datos" "*.mae" "$MAEDIR"
-	Copiar_archivos "$GRUPO01/datos" "*.tab" "$MAEDIR"
-	echo
-	echo "Instalando Programas y Funciones"
-#	Copiar_archivos "$GRUPO01/datos" "*.sh" "$GRUPO01"/"$BINDIR"
-#	Copiar_archivos "$GRUPO01/datos" "*.pl" "$GRUPO01"/"$BINDIR"	
 
-	Copiar_archivos "$GRUPO01/datos/bin" "Start" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos/bin" "Stop" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos/bin" "Mover" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos/bin" "Rating" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos/bin" "Reporting" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos/bin" "Logging" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos/bin" "Listener" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos/bin" "Masterlist" "$BINDIR"
-	Copiar_archivos "$GRUPO01/datos/bin" "Initializer" "$BINDIR"
-}
 #Actualizo archivos de configuracion
 function Actualizacion_archivos_configuracion {
 	if [ -f "$CONFDIR/Installer.conf" ] 
 	then
-		rm $CONFDIR/Installer.conf
+		rm "$CONFDIR/Installer.conf"
 	fi
 	date=`date`
 
@@ -565,17 +568,18 @@ Proceso de instalacion cancelado."
 				exit 1
 			else
 				Creacion_de_directorios 1
-				tmp=`Copiar_archivos "$GRUPO01/datos" "*.mae" "$MAEDIR" `
-				tmp=`Copiar_archivos "$GRUPO01/datos" "*.tab" "$MAEDIR" `
-				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Start" "$BINDIR" `
-				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Stop" "$BINDIR" `
-				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Mover" "$BINDIR" `
-				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Rating" "$BINDIR" `
-				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Reporting" "$BINDIR"` 
-				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Logging" "$BINDIR" `
-				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Listener" "$BINDIR" `
-				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Masterlist" "$BINDIR" `
-				tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Initializer" "$BINDIR" `
+				Instalacion_archivos
+				#tmp=`Copiar_archivos "$GRUPO01/datos" "*.mae" "$MAEDIR" `
+				#tmp=`Copiar_archivos "$GRUPO01/datos" "*.tab" "$MAEDIR" `
+				#tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Start" "$BINDIR" `
+				#tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Stop" "$BINDIR" `
+				#tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Mover" "$BINDIR" `
+				#tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Rating" "$BINDIR" `
+				#tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Reporting" "$BINDIR"` 
+				#tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Logging" "$BINDIR" `
+				#tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Listener" "$BINDIR" `
+				#tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Masterlist" "$BINDIR" `
+				#tmp=`Copiar_archivos "$GRUPO01/datos/bin" "Initializer" "$BINDIR" `
 			fi
 			
 		fi

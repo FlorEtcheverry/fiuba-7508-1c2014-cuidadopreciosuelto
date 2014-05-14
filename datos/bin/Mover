@@ -14,7 +14,7 @@ origen=$1
 destino=$2
 
 #me fijo si existe el origen
-if ! [ -f $origen ]
+if ! [ -f "$origen" ]
 then 
 	$BINDIR/Logging Mover "se esta intentando mover un archivo inexistente: $origen" ERR
 	exit 1
@@ -56,21 +56,21 @@ fi
 if [ $# -lt 3 ];then invocador="SOMEONE";else invocador=$3; fi
 
 #me fijo si son iguales
-if [ $origen = $destino ]
+if [ "$origen" = "$destino" ]
 then
 	$BINDIR/Logging Mover "se esta intentando mover un archivo a su misma posicion: $origen" WAR
 	exit 0
 fi
 
 #me fijo si en ese directorio ya existe el archivo destino
-if [ -f $destino ]
+if [ -f "$destino" ]
 #si ya existe lo guardo en la carpeta dup
 then
 	#si no existe la carpeta dup la creo
 	if ! [ -d "${destino%/*}/dup" ]; then mkdir "${destino%/*}/dup";fi
 	base_destino="${destino%/*}/dup/${destino##*/}"
 	#me dijo si el archivo no esta ya en la carpeta dup
-	if ! [ -f $base_destino ]
+	if ! [ -f "$base_destino" ]
 	then 
 		#si no esta lo muevo
 		mv "$origen" "$base_destino"
